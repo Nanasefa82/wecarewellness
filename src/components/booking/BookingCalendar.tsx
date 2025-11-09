@@ -27,11 +27,23 @@ const BookingCalendar: React.FC = () => {
             const endDate = format(calendarEnd, 'yyyy-MM-dd');
             console.log('📅 BookingCalendar: Loading slots for month range:', { startDate, endDate });
 
-            // Use direct query method for now (more reliable)
-            console.log('🔍 Using direct query method...');
-            const slots = await getAvailabilitySlots(undefined, startDate, endDate);
-            console.log('📅 Direct query returned:', slots);
-            setAvailableSlots(slots || []);
+            // Use direct query method with timeout
+            console.log('🔍 Using direct query method with 5s timeout...');
+            
+            const timeoutPromise = new Promise<never>((_, reject) =>
+                setTimeout(() => reject(new Error('Query timeout')), 5000)
+            );
+            
+            const queryPromise = getAvailabilitySlots(undefined, startDate, endDate);
+            
+            try {
+                const slots = await Promise.race([queryPromise, timeoutPromise]);
+                console.log('📅 Direct query returned:', slots);
+                setAvailableSlots(slots || []);
+            } catch (timeoutError) {
+                console.error('⏰ Query timed out, using empty slots');
+                setAvailableSlots([]);
+            }
         } catch (error) {
             console.error('❌ BookingCalendar: Error loading available slots:', error);
         } finally {

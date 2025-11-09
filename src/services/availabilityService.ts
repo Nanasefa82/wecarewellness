@@ -30,36 +30,32 @@ export class AvailabilityService {
                 endDate: endDate + 'T23:59:59'
             });
 
-            // Try a simpler query first to see if it's a query complexity issue
-            console.log('🔍 Testing simple query first...');
-            const queryStartTime = Date.now();
-            const { data: testData, error: testError } = await supabase
-                .from('availability_slots')
-                .select('id, start_time, end_time, doctor_id, is_available')
-                .eq('doctor_id', doctorId)
-                .limit(10);
-
-            const queryDuration = Date.now() - queryStartTime;
-            console.log('🧪 Simple test query result:', { 
-                count: testData?.length || 0, 
-                error: testError,
-                duration: `${queryDuration}ms`
-            });
-
-            if (testError) {
-                console.error('❌ Simple test query failed:', testError);
-                throw testError;
-            }
-
-            // Now try the full query - removed is_available filter to see all slots
-            console.log('🔍 Running full query (including unavailable slots for debugging)...');
-            const { data, error } = await supabase
+            // Build query based on whether doctorId is provided
+            const hasDoctor = doctorId && doctorId.trim() !== '';
+            console.log('🔍 Building query...', { doctorId, hasDoctor });
+            
+            let query = supabase
                 .from('availability_slots')
                 .select('*')
-                .eq('doctor_id', doctorId)
+                .eq('is_available', true)
                 .gte('start_time', startDate + 'T00:00:00')
                 .lte('start_time', endDate + 'T23:59:59')
                 .order('start_time', { ascending: true });
+
+            // Only filter by doctor if doctorId is provided and not empty
+            if (hasDoctor) {
+                console.log('🔍 Filtering by doctor_id:', doctorId);
+                query = query.eq('doctor_id', doctorId);
+            } else {
+                console.log('🔍 Fetching all available slots (no doctor filter)');
+            }
+
+            console.log('🚀 Executing query...');
+            const queryStartTime = Date.now();
+            const { data, error } = await query;
+            const queryDuration = Date.now() - queryStartTime;
+
+            console.log('✅ Query completed in', `${queryDuration}ms`);
 
             if (error) {
                 console.error('❌ Database query error:', error);
@@ -72,16 +68,14 @@ export class AvailabilityService {
                 throw error;
             }
 
-            console.log('✅ Direct query returned:', data?.length || 0, 'slots');
+            console.log('✅ Query returned:', data?.length || 0, 'slots');
             if (data && data.length > 0) {
-                console.log('📊 Sample slot data:', data[0]);
-                console.log('📊 All slots:', data.map(slot => ({
-                    id: slot.id,
-                    start_time: slot.start_time,
-                    end_time: slot.end_time,
-                    doctor_id: slot.doctor_id,
-                    is_available: slot.is_available
-                })));
+                console.log('📊 Sample slot:', {
+                    id: data[0].id,
+                    start_time: data[0].start_time,
+                    doctor_id: data[0].doctor_id,
+                    is_available: data[0].is_available
+                });
             }
 
             // Data is already in the correct format for AvailabilitySlot interface

@@ -55,10 +55,7 @@ const SimpleContactTest: React.FC = () => {
         setStatus('Testing form submission with useContactForm hook...');
 
         try {
-            // Import the hook dynamically to test it
-            const { useContactForm } = await import('../../hooks/useContactForm');
-
-            // This won't work directly since we're not in a component, but let's see what happens
+            // This won't work directly since we're not in a component
             setStatus('⚠️ Cannot test hook directly from here. Use the actual contact form instead.');
         } catch (error) {
             setStatus(`💥 Hook test error: ${error}`);

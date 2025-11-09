@@ -29,13 +29,13 @@ export const useAvailability = () => {
     }, []);
 
     const getAvailabilitySlots = useCallback(async (doctorId?: string, startDate?: string, endDate?: string) => {
-        if (!doctorId || !startDate || !endDate) {
-            console.error('❌ Missing required parameters:', { doctorId, startDate, endDate });
+        if (!startDate || !endDate) {
+            console.error('❌ Missing required date parameters:', { doctorId, startDate, endDate });
             return [];
         }
 
-        // Create cache key
-        const cacheKey = `availability_slots_${doctorId}_${startDate}_${endDate}`;
+        // Create cache key (include 'all' if no doctorId)
+        const cacheKey = `availability_slots_${doctorId || 'all'}_${startDate}_${endDate}`;
         
         // Check cache first
         const cachedData = cache.get<AvailabilitySlot[]>(cacheKey);
@@ -48,10 +48,10 @@ export const useAvailability = () => {
         setError(null);
 
         try {
-            console.log('🔍 useAvailability.getAvailabilitySlots called with:', { doctorId, startDate, endDate });
+            console.log('🔍 useAvailability.getAvailabilitySlots called with:', { doctorId: doctorId || 'all', startDate, endDate });
 
-            // Use the new service
-            const result = await AvailabilityService.getAvailabilitySlots(doctorId, startDate, endDate);
+            // Use the new service (doctorId is optional now)
+            const result = await AvailabilityService.getAvailabilitySlots(doctorId || '', startDate, endDate);
             
             // Cache the result for 2 minutes
             cache.set(cacheKey, result, 2 * 60 * 1000);
