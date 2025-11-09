@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Calendar, Clock, User, Phone, Mail, MessageSquare, CalendarClock } from 'lucide-react';
+import { Calendar, Clock, User, Phone, Mail, Eye } from 'lucide-react';
 import { useBookings } from '../../hooks/useBookings';
 import { BookingStatus } from '../../types/booking';
 import { format, startOfMonth, endOfMonth, addMonths, subMonths } from 'date-fns';
@@ -54,10 +54,7 @@ const AppointmentsDashboard: React.FC = () => {
         }
     };
 
-    const handleReschedule = (booking: any) => {
-        setSelectedBooking(booking);
-        setShowRescheduleModal(true);
-    };
+
 
     const filteredBookings = bookings.filter(booking => {
         if (filter === 'all') return true;
@@ -75,51 +72,31 @@ const AppointmentsDashboard: React.FC = () => {
     };
 
     const getStatusActions = (booking: any) => {
-        const actions = [];
-
         if (booking.status === 'pending') {
-            actions.push(
+            return (
                 <button
-                    key="confirm"
                     onClick={() => handleStatusUpdate(booking.id, 'confirmed')}
-                    className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+                    className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                    title="Confirm appointment"
                 >
                     Confirm
                 </button>
             );
         }
 
-        if (['pending', 'confirmed'].includes(booking.status)) {
-            actions.push(
+        if (booking.status === 'confirmed') {
+            return (
                 <button
-                    key="reschedule"
-                    onClick={() => handleReschedule(booking)}
-                    className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-                >
-                    Reschedule
-                </button>
-            );
-            actions.push(
-                <button
-                    key="complete"
                     onClick={() => handleStatusUpdate(booking.id, 'completed')}
-                    className="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition-colors"
+                    className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                    title="Mark as completed"
                 >
                     Complete
                 </button>
             );
-            actions.push(
-                <button
-                    key="cancel"
-                    onClick={() => handleStatusUpdate(booking.id, 'cancelled')}
-                    className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
-                >
-                    Cancel
-                </button>
-            );
         }
 
-        return actions;
+        return null;
     };
 
     return (
@@ -190,236 +167,293 @@ const AppointmentsDashboard: React.FC = () => {
                             </p>
                         </div>
                     ) : (
-                        <div className="space-y-4">
-                            {filteredBookings.map((booking) => (
-                                <div key={booking.id} className="border border-gray-600 rounded-lg p-4 hover:bg-gray-700 transition-colors bg-gray-800">
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex-1">
-                                            {/* Date and Time */}
-                                            <div className="flex items-center space-x-4 mb-3">
-                                                <div className="flex items-center space-x-2">
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-700">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Date & Time</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Patient</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Contact</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Reason</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Status</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-700">
+                                    {filteredBookings.map((booking) => (
+                                        <tr key={booking.id} className="hover:bg-gray-750 transition-colors">
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                <div className="flex items-center space-x-2 text-sm">
                                                     <Calendar className="w-4 h-4 text-sage-400" />
-                                                    <span className="font-medium text-white">
-                                                        {format(new Date(booking.preferred_date), 'EEEE, MMM d, yyyy')}
-                                                    </span>
-                                                </div>
-                                                <div className="flex items-center space-x-2">
-                                                    <Clock className="w-4 h-4 text-sage-400" />
-                                                    <span className="text-gray-300">
-                                                        {booking.preferred_time}
-                                                    </span>
-                                                </div>
-                                                <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(booking.status)}`}>
-                                                    {booking.status}
-                                                </span>
-                                            </div>
-
-                                            {/* Patient Information */}
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                                <div className="space-y-2">
-                                                    <div className="flex items-center space-x-2">
-                                                        <User className="w-4 h-4 text-gray-400" />
-                                                        <span className="text-white font-medium">{booking.first_name} {booking.last_name}</span>
+                                                    <div>
+                                                        <div className="text-white font-medium">
+                                                            {format(new Date(booking.preferred_date), 'MMM d, yyyy')}
+                                                        </div>
+                                                        <div className="text-gray-400 text-xs flex items-center">
+                                                            <Clock className="w-3 h-3 mr-1" />
+                                                            {booking.preferred_time}
+                                                        </div>
                                                     </div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <Mail className="w-4 h-4 text-gray-400" />
-                                                        <a
-                                                            href={`mailto:${booking.email}`}
-                                                            className="text-sage-400 hover:text-sage-300 transition-colors"
-                                                        >
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center space-x-2">
+                                                    <User className="w-4 h-4 text-gray-400" />
+                                                    <div>
+                                                        <div className="text-sm text-white font-medium">
+                                                            {booking.first_name} {booking.last_name}
+                                                        </div>
+                                                        <div className="text-xs text-gray-400">
+                                                            DOB: {booking.date_of_birth ? new Date(booking.date_of_birth + 'T00:00:00').toLocaleDateString('en-US') : 'N/A'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="text-sm space-y-1">
+                                                    <div className="flex items-center text-gray-300">
+                                                        <Mail className="w-3 h-3 mr-1 text-gray-400" />
+                                                        <a href={`mailto:${booking.email}`} className="hover:text-sage-400 transition-colors truncate max-w-[150px]">
                                                             {booking.email}
                                                         </a>
                                                     </div>
-                                                    <div className="flex items-center space-x-2">
-                                                        <Phone className="w-4 h-4 text-gray-400" />
-                                                        <a
-                                                            href={`tel:${booking.phone}`}
-                                                            className="text-sage-400 hover:text-sage-300 transition-colors"
-                                                        >
+                                                    <div className="flex items-center text-gray-300">
+                                                        <Phone className="w-3 h-3 mr-1 text-gray-400" />
+                                                        <a href={`tel:${booking.phone}`} className="hover:text-sage-400 transition-colors">
                                                             {booking.phone}
                                                         </a>
                                                     </div>
                                                 </div>
-
-                                                <div className="space-y-2">
-                                                    <div className="text-sm">
-                                                        <span className="text-gray-400">DOB:</span>
-                                                        <span className="ml-2 text-gray-300">{format(new Date(booking.date_of_birth), 'MMM d, yyyy')}</span>
-                                                    </div>
-                                                    <div className="text-sm">
-                                                        <span className="text-gray-400">Insurance:</span>
-                                                        <span className="ml-2 text-gray-300">{booking.insurance_provider || 'None'}</span>
-                                                    </div>
-                                                    <div className="text-sm">
-                                                        <span className="text-gray-400">Booked:</span>
-                                                        <span className="ml-2 text-gray-300">
-                                                            {format(new Date(booking.created_at), 'MMM d, h:mm a')}
-                                                        </span>
-                                                    </div>
+                                            </td>
+                                            <td className="px-4 py-3 max-w-xs">
+                                                <div className="text-sm text-gray-300 truncate" title={booking.reason_for_visit}>
+                                                    {booking.reason_for_visit || 'Not provided'}
                                                 </div>
-                                            </div>
-
-                                            {/* Reason for Visit */}
-                                            {booking.reason_for_visit && (
-                                                <div className="mb-3">
-                                                    <div className="flex items-start space-x-2">
-                                                        <MessageSquare className="w-4 h-4 text-gray-400 mt-0.5" />
-                                                        <div>
-                                                            <span className="text-sm text-gray-400">Reason for Visit:</span>
-                                                            <p className="text-gray-300 text-sm mt-1">{booking.reason_for_visit}</p>
-                                                        </div>
+                                                {booking.insurance_provider && (
+                                                    <div className="text-xs text-gray-400 mt-1">
+                                                        Insurance: {booking.insurance_provider}
                                                     </div>
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                <span className={`px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(booking.status)}`}>
+                                                    {booking.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap">
+                                                <div className="flex items-center space-x-2">
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedBooking(booking);
+                                                            setShowRescheduleModal(true);
+                                                        }}
+                                                        className="text-sage-400 hover:text-sage-300 transition-colors"
+                                                        title="View details"
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                    </button>
+                                                    {getStatusActions(booking)}
                                                 </div>
-                                            )}
-
-                                            {/* Medical Info */}
-                                            {(booking.previous_treatment || booking.current_medications) && (
-                                                <div className="mb-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    {booking.previous_treatment && (
-                                                        <div className="text-sm">
-                                                            <span className="text-gray-400">Previous Treatment:</span>
-                                                            <p className="text-gray-300 mt-1">{booking.previous_treatment}</p>
-                                                        </div>
-                                                    )}
-                                                    {booking.current_medications && (
-                                                        <div className="text-sm">
-                                                            <span className="text-gray-400">Current Medications:</span>
-                                                            <p className="text-gray-300 mt-1">{booking.current_medications}</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Actions */}
-                                        <div className="flex flex-col space-y-2 ml-4">
-                                            {getStatusActions(booking)}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </div>
             </div>
 
-            {/* Reschedule Modal */}
+            {/* Booking Details Modal */}
             {showRescheduleModal && selectedBooking && (
-                <RescheduleModal
+                <BookingDetailsModal
                     booking={selectedBooking}
                     onClose={() => {
                         setShowRescheduleModal(false);
                         setSelectedBooking(null);
                     }}
-                    onSave={loadBookings}
+                    onStatusUpdate={(status) => {
+                        handleStatusUpdate(selectedBooking.id, status);
+                        setShowRescheduleModal(false);
+                        setSelectedBooking(null);
+                    }}
                 />
             )}
         </div>
     );
 };
 
-interface RescheduleModalProps {
+interface BookingDetailsModalProps {
     booking: any;
     onClose: () => void;
-    onSave: () => void;
+    onStatusUpdate: (status: BookingStatus) => void;
 }
 
-const RescheduleModal: React.FC<RescheduleModalProps> = ({ booking, onClose, onSave }) => {
-    const { updateBooking } = useBookings();
-    const [newDate, setNewDate] = useState(booking.preferred_date);
-    const [newTime, setNewTime] = useState(booking.preferred_time);
-    const [saving, setSaving] = useState(false);
-
-    const handleSave = async () => {
-        setSaving(true);
-        try {
-            await updateBooking(booking.id, {
-                preferred_date: newDate,
-                preferred_time: newTime
-            });
-            onSave();
-            onClose();
-        } catch (error) {
-            console.error('Error rescheduling booking:', error);
-            alert('Failed to reschedule. Please try again.');
-        } finally {
-            setSaving(false);
+const BookingDetailsModal: React.FC<BookingDetailsModalProps> = ({ booking, onClose, onStatusUpdate }) => {
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'pending': return 'bg-yellow-100 text-yellow-800';
+            case 'confirmed': return 'bg-green-100 text-green-800';
+            case 'completed': return 'bg-blue-100 text-blue-800';
+            case 'cancelled': return 'bg-red-100 text-red-800';
+            default: return 'bg-gray-100 text-gray-800';
         }
     };
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg w-full max-w-md">
+            <div className="bg-gray-800 rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
                 <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center space-x-2">
-                            <CalendarClock className="w-5 h-5 text-sage-600" />
-                            <h3 className="text-xl font-serif text-secondary-800">Reschedule Appointment</h3>
-                        </div>
+                        <h2 className="text-xl font-semibold text-white">Booking Details</h2>
                         <button
                             onClick={onClose}
-                            className="text-gray-400 hover:text-gray-600 transition-colors"
+                            className="text-gray-400 hover:text-gray-300"
+                            title="Close"
                         >
                             ✕
                         </button>
                     </div>
 
-                    {/* Patient Info */}
-                    <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                        <div className="text-sm">
-                            <span className="text-gray-500">Patient:</span>
-                            <span className="ml-2 font-medium">{booking.first_name} {booking.last_name}</span>
+                    <div className="space-y-6">
+                        {/* Appointment Info */}
+                        <div>
+                            <h3 className="text-lg font-medium text-white mb-3">Appointment Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span className="text-gray-400">Date:</span>
+                                    <span className="text-white ml-2">{format(new Date(booking.preferred_date), 'EEEE, MMM d, yyyy')}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400">Time:</span>
+                                    <span className="text-white ml-2">{booking.preferred_time}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400">Status:</span>
+                                    <span className={`ml-2 px-2 py-1 text-xs rounded-full capitalize ${getStatusColor(booking.status)}`}>
+                                        {booking.status}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400">Booked:</span>
+                                    <span className="text-white ml-2">{format(new Date(booking.created_at), 'MMM d, yyyy h:mm a')}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className="text-sm mt-1">
-                            <span className="text-gray-500">Current Date:</span>
-                            <span className="ml-2">{format(new Date(booking.preferred_date), 'MMM d, yyyy')}</span>
+
+                        {/* Personal Information */}
+                        <div>
+                            <h3 className="text-lg font-medium text-white mb-3">Personal Information</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span className="text-gray-400">Name:</span>
+                                    <span className="text-white ml-2">{booking.first_name} {booking.last_name}</span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400">Date of Birth:</span>
+                                    <span className="text-white ml-2">
+                                        {booking.date_of_birth ? new Date(booking.date_of_birth + 'T00:00:00').toLocaleDateString('en-US') : 'N/A'}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400">Email:</span>
+                                    <a href={`mailto:${booking.email}`} className="text-sage-400 hover:text-sage-300 ml-2">
+                                        {booking.email}
+                                    </a>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400">Phone:</span>
+                                    <a href={`tel:${booking.phone}`} className="text-sage-400 hover:text-sage-300 ml-2">
+                                        {booking.phone}
+                                    </a>
+                                </div>
+                                <div>
+                                    <span className="text-gray-400">Insurance:</span>
+                                    <span className="text-white ml-2">{booking.insurance_provider || 'Not provided'}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div className="text-sm mt-1">
-                            <span className="text-gray-500">Current Time:</span>
-                            <span className="ml-2">{booking.preferred_time}</span>
+
+                        {/* Medical Information */}
+                        <div>
+                            <h3 className="text-lg font-medium text-white mb-3">Medical Information</h3>
+                            <div className="space-y-3 text-sm">
+                                <div>
+                                    <span className="text-gray-400 block mb-1">Reason for Visit:</span>
+                                    <span className="text-white">{booking.reason_for_visit || 'Not provided'}</span>
+                                </div>
+                                {booking.previous_treatment && (
+                                    <div>
+                                        <span className="text-gray-400 block mb-1">Previous Treatment:</span>
+                                        <span className="text-white">{booking.previous_treatment}</span>
+                                    </div>
+                                )}
+                                {booking.current_medications && (
+                                    <div>
+                                        <span className="text-gray-400 block mb-1">Current Medications:</span>
+                                        <span className="text-white">{booking.current_medications}</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
+
+                        {/* Emergency Contact */}
+                        {(booking.emergency_contact || booking.emergency_phone) && (
+                            <div>
+                                <h3 className="text-lg font-medium text-white mb-3">Emergency Contact</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    {booking.emergency_contact && (
+                                        <div>
+                                            <span className="text-gray-400">Name:</span>
+                                            <span className="text-white ml-2">{booking.emergency_contact}</span>
+                                        </div>
+                                    )}
+                                    {booking.emergency_phone && (
+                                        <div>
+                                            <span className="text-gray-400">Phone:</span>
+                                            <a href={`tel:${booking.emergency_phone}`} className="text-sage-400 hover:text-sage-300 ml-2">
+                                                {booking.emergency_phone}
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
-                    {/* New Date/Time */}
-                    <div className="space-y-4 mb-6">
-                        <div>
-                            <label className="block text-sm font-medium text-secondary-700 mb-2">
-                                New Date
-                            </label>
-                            <input
-                                type="date"
-                                value={newDate}
-                                onChange={(e) => setNewDate(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500"
-                            />
+                    {/* Actions */}
+                    <div className="mt-8 flex justify-between items-center">
+                        <div className="flex space-x-2">
+                            {booking.status === 'pending' && (
+                                <button
+                                    onClick={() => onStatusUpdate('confirmed')}
+                                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                >
+                                    Confirm Appointment
+                                </button>
+                            )}
+                            {booking.status === 'confirmed' && (
+                                <button
+                                    onClick={() => onStatusUpdate('completed')}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    Mark as Completed
+                                </button>
+                            )}
+                            {['pending', 'confirmed'].includes(booking.status) && (
+                                <button
+                                    onClick={() => onStatusUpdate('cancelled')}
+                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                >
+                                    Cancel Appointment
+                                </button>
+                            )}
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-secondary-700 mb-2">
-                                New Time
-                            </label>
-                            <input
-                                type="time"
-                                value={newTime}
-                                onChange={(e) => setNewTime(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex space-x-3">
                         <button
                             onClick={onClose}
-                            disabled={saving}
-                            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
                         >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            disabled={saving}
-                            className="flex-1 px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors disabled:opacity-50"
-                        >
-                            {saving ? 'Saving...' : 'Reschedule'}
+                            Close
                         </button>
                     </div>
                 </div>

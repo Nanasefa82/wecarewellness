@@ -34,45 +34,40 @@ export const useContactForm = () => {
     try {
       console.log('📧 useContactForm: Creating submission with data:', formData);
 
-      // Use Netlify function instead of direct Supabase call to bypass RLS issues
-      const response = await fetch('/.netlify/functions/contact-submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
+      // Use direct Supabase insert (RLS is disabled for contact_submissions)
+      const { data, error } = await supabase
+        .from('contact_submissions')
+        .insert([{
+          first_name: formData.firstName,
+          last_name: formData.lastName,
           email: formData.email,
           message: formData.message,
-        }),
-      });
+          status: 'new'
+        }])
+        .select()
+        .single();
 
-      console.log('📧 useContactForm: API response status:', response.status);
+      console.log('📧 useContactForm: Supabase response:', { data, error });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('❌ useContactForm: API error:', errorData);
-        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      if (error) {
+        console.error('❌ useContactForm: Supabase error:', error);
+        throw new Error(error.message || 'Failed to submit form');
       }
 
-      const result = await response.json();
-      console.log('📧 useContactForm: API response:', result);
-
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to submit form');
+      if (!data) {
+        throw new Error('No data returned from database');
       }
 
-      // Create a mock submission object since we don't get full data back from the API
+      // Map database response to ContactFormData
       const newSubmission: ContactFormData = {
-        id: result.id,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        message: formData.message,
-        status: 'new',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        id: data.id,
+        firstName: data.first_name,
+        lastName: data.last_name,
+        email: data.email,
+        message: data.message,
+        status: data.status,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
       };
 
       console.log('✅ useContactForm: Successfully created submission:', newSubmission);

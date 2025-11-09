@@ -6,14 +6,18 @@ const Footer = () => {
         { href: '#contact', label: 'Contact' },
         { href: '#conditions', label: 'Specialties' },
         { href: '#why-choose-us', label: 'About' },
-        { href: '#insurance', label: 'Fees & Insurance' },
+        { href: '/fees-insurance', label: 'Fees & Insurance', isRoute: true },
         { href: '#testimonials', label: 'Testimonials' },
     ];
 
-    const scrollToSection = (href: string) => {
-        const element = document.querySelector(href);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+    const handleNavigation = (href: string, isRoute?: boolean) => {
+        if (isRoute) {
+            window.location.href = href;
+        } else {
+            const element = document.querySelector(href);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
         }
     };
 
@@ -65,7 +69,7 @@ const Footer = () => {
                             {quickLinks.map((link) => (
                                 <button
                                     key={link.href}
-                                    onClick={() => scrollToSection(link.href)}
+                                    onClick={() => handleNavigation(link.href, link.isRoute)}
                                     className="block text-lg text-secondary-600 hover:text-sage-600 transition-colors text-left font-light"
                                 >
                                     {link.label}

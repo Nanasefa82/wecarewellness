@@ -9,7 +9,7 @@ const Header = () => {
         { href: '#services', label: 'Individual Therapy' },
         { href: '/about', label: 'About', isRoute: true },
         { href: '/contact', label: 'Contact', isRoute: true },
-        { href: '#insurance', label: 'Fees & Insurance' },
+        { href: '/fees-insurance', label: 'Fees & Insurance', isRoute: true },
         { href: '#conditions', label: 'Specialties' },
     ];
 

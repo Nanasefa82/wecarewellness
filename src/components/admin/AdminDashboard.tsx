@@ -71,10 +71,14 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ children }) => {
 
     const handleSignOut = async () => {
         try {
+            // Navigate immediately to prevent components from loading
+            navigate('/', { replace: true });
+            // Then sign out
             await signOut();
-            navigate('/');
         } catch (error) {
             console.error('Error signing out:', error);
+            // Still navigate even if signout fails
+            navigate('/', { replace: true });
         }
     };
 
@@ -213,7 +217,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ children }) => {
                                 <Bell className="h-5 w-5" />
                             </button>
                             <div className="text-sm text-gray-300">
-                                Welcome, {profile?.full_name || profile?.email}
+                                Welcome, {profile?.full_name || profile?.email || user?.email || 'User'}
                             </div>
                         </div>
                     </div>

@@ -192,7 +192,7 @@ const BookingManager: React.FC = () => {
                                                         {booking.first_name} {booking.last_name}
                                                     </div>
                                                     <div className="text-sm text-gray-400">
-                                                        DOB: {format(new Date(booking.date_of_birth), 'MMM dd, yyyy')}
+                                                        DOB: {booking.date_of_birth ? new Date(booking.date_of_birth + 'T00:00:00').toLocaleDateString('en-US') : 'N/A'}
                                                     </div>
                                                 </div>
                                             </div>
@@ -333,7 +333,9 @@ const BookingManager: React.FC = () => {
                                         </div>
                                         <div>
                                             <span className="text-gray-400">Date of Birth:</span>
-                                            <span className="text-white ml-2">{format(new Date(selectedBooking.date_of_birth), 'MMM dd, yyyy')}</span>
+                                            <span className="text-white ml-2">
+                                                {selectedBooking.date_of_birth ? new Date(selectedBooking.date_of_birth + 'T00:00:00').toLocaleDateString('en-US') : 'N/A'}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

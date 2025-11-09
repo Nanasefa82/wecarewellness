@@ -89,13 +89,14 @@ const BookingFormPage: React.FC = () => {
             };
             
             // Transform form data to API format
+            // For date fields, ensure they're stored as ISO date strings (YYYY-MM-DD)
             const createData = {
                 availability_slot_id: bookingData.availability_slot_id,
                 first_name: bookingData.firstName,
                 last_name: bookingData.lastName,
                 email: bookingData.email,
                 phone: bookingData.phone,
-                date_of_birth: bookingData.dateOfBirth,
+                date_of_birth: bookingData.dateOfBirth, // Already in YYYY-MM-DD format from date input
                 preferred_date: bookingData.preferredDate,
                 preferred_time: bookingData.preferredTime,
                 reason_for_visit: bookingData.reasonForVisit,

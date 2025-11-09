@@ -252,7 +252,7 @@ The We Care Wellness Team
             <p><strong>Name:</strong> ${booking.first_name} ${booking.last_name}</p>
             <p><strong>Email:</strong> <a href="mailto:${booking.email}">${booking.email}</a></p>
             <p><strong>Phone:</strong> <a href="tel:${booking.phone}">${booking.phone}</a></p>
-            <p><strong>Date of Birth:</strong> ${new Date(booking.date_of_birth).toLocaleDateString()}</p>
+            <p><strong>Date of Birth:</strong> ${booking.date_of_birth ? new Date(booking.date_of_birth + 'T00:00:00').toLocaleDateString('en-US') : 'N/A'}</p>
             <p><strong>Insurance:</strong> ${booking.insurance_provider || 'Not provided'}</p>
         </div>
         
@@ -303,7 +303,7 @@ Status: ${booking.status.toUpperCase()}
 Patient Contact:
 Email: ${booking.email}
 Phone: ${booking.phone}
-DOB: ${new Date(booking.date_of_birth).toLocaleDateString()}
+DOB: ${booking.date_of_birth ? new Date(booking.date_of_birth + 'T00:00:00').toLocaleDateString('en-US') : 'N/A'}
 
 Medical Information:
 Reason: ${booking.reason_for_visit || 'Not specified'}

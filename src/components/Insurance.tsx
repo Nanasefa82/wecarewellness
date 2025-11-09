@@ -126,14 +126,14 @@ const Insurance = () => {
                                 />
                             </div>
 
-                            {/* Kaiser Permanente */}
+                            {/* Kaiser Permanente
                             <div className="flex items-center justify-center p-8 lg:p-10 bg-white rounded-xl shadow-md border border-sage-200 hover:shadow-lg hover:border-sage-300 transition-all duration-300 min-h-[120px]">
                                 <img
                                     src="/images/kaiser-1.jpg"
                                     alt="Kaiser Permanente"
                                     className="h-16 w-auto object-contain"
                                 />
-                            </div>
+                            </div> */}
 
                             {/* Humana */}
                             <div className="flex items-center justify-center p-8 lg:p-10 bg-white rounded-xl shadow-md border border-sage-200 hover:shadow-lg hover:border-sage-300 transition-all duration-300 min-h-[120px]">
