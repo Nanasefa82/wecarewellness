@@ -28,6 +28,7 @@ const TestDataCreator = lazy(() => import('./components/TestDataCreator'))
 // Import page components
 import AboutUs from './components/AboutUs'
 import ContactUs from './components/ContactUs'
+import FeesInsurance from './components/FeesInsurance'
 import BookingFormPage from './components/BookingFormPage'
 import SupabaseTest from './components/debug/SupabaseTest'
 import AuthDebug from './components/debug/AuthDebug'
@@ -94,6 +95,9 @@ function App() {
 
                     {/* About Us page */}
                     <Route path="/about" element={<AboutUs />} />
+
+                    {/* Fees & Insurance page */}
+                    <Route path="/fees-insurance" element={<FeesInsurance />} />
 
                     {/* Contact Us page */}
                     <Route path="/contact" element={<ContactUs />} />

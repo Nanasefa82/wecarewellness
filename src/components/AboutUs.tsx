@@ -1,4 +1,4 @@
-import { Heart, Award, Users, Shield } from 'lucide-react';
+import { Heart, Award, Users } from 'lucide-react';
 import { Header, Footer } from './layout';
 
 const AboutUs = () => {
@@ -17,56 +17,29 @@ const AboutUs = () => {
     }
   ];
 
-  const conditions = [
-    "Depression", "Anxiety", "Bipolar Disorders", "ADHD", "PTSD", 
-    "OCD", "Schizophrenia", "Psychotic disorders", "Insomnia", "Personality Disorders"
-  ];
-
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      {/* Header Section */}
-      <section className="bg-white py-24 lg:py-32">
+      {/* Header Section with Hero Image */}
+      <section className="relative bg-white py-16 lg:py-24">
         <div className="w-full px-8 sm:px-12 lg:px-20 xl:px-24">
-          <div className="mb-20 lg:mb-28">
-            <div className="text-secondary-500 text-base tracking-widest uppercase font-light mb-6">
-              ABOUT WE CARE WELLNESS LLC
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-secondary-800 leading-tight mb-8 max-w-4xl">
-              Compassionate Mental Health Care with a Personal Touch
-            </h1>
-            <p className="text-xl md:text-2xl text-secondary-600 leading-relaxed max-w-4xl font-light">
-              At We Care Wellness LLC, we believe every individual deserves personalized, compassionate mental health care. Our experienced team is dedicated to supporting your journey towards wellness.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Mission Statement */}
-      <section className="bg-white py-24 lg:py-32">
-        <div className="w-full px-8 sm:px-12 lg:px-20 xl:px-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 xl:gap-32 items-center w-full">
-            <div className="space-y-8">
-              <div className="mb-6">
-                <div className="w-16 h-16 bg-sage-100 rounded-full flex items-center justify-center mb-6">
-                  <Heart className="w-8 h-8 text-sage-600" />
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div>
+              <div className="text-secondary-500 text-base tracking-widest uppercase font-light mb-6">
+                ABOUT WE CARE WELLNESS LLC
               </div>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-secondary-800 leading-tight mb-8">
-                Our Mission & Values
-              </h2>
-              <p className="text-xl md:text-2xl text-secondary-600 leading-relaxed font-light mb-6">
-                We specialize in providing comprehensive Mental Health care with a focus on individualized treatment. Our team of experienced mental health professionals are dedicated to supporting your journey towards mental wellness through a range of services including medication management, counseling and innovative therapies.
-              </p>
-              <p className="text-lg text-secondary-600 leading-relaxed font-light">
-                We're committed to creating a compassionate and understanding environment, ensuring every patient feels heard and valued. Discover a path to better mental health with us.
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-secondary-800 leading-tight mb-6">
+                Compassionate Mental Health Care with a Personal Touch
+              </h1>
+              <p className="text-xl md:text-2xl text-secondary-600 leading-relaxed font-light">
+                At We Care Wellness LLC, we believe every individual deserves personalized, compassionate mental health care. Our experienced team is dedicated to supporting your journey towards wellness.
               </p>
             </div>
             <div className="relative">
               <img 
                 src="/images/aboutus/WeCareWellness_AboutUs2.png" 
-                alt="We Care Wellness - Compassionate Mental Health Care" 
-                className="w-full h-[500px] lg:h-[600px] object-cover rounded-2xl shadow-2xl"
+                alt="We Care Wellness - Mental Health Support" 
+                className="w-full h-[400px] lg:h-[500px] object-cover rounded-2xl shadow-2xl"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-2xl"></div>
             </div>
@@ -74,81 +47,90 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Expertise Section */}
-      <section className="bg-white py-24 lg:py-32">
+      {/* Vision & Mission Statement */}
+      <section className="bg-sage-50 py-16 lg:py-20">
         <div className="w-full px-8 sm:px-12 lg:px-20 xl:px-24">
-          <div className="mb-20 lg:mb-28">
-            <div className="text-secondary-500 text-base tracking-widest uppercase font-light mb-6">
-              OUR CLINICAL EXPERTISE
-            </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-secondary-800 leading-tight mb-8 max-w-4xl">
-              Comprehensive Care for Mental Health Conditions
-            </h2>
-            <p className="text-xl md:text-2xl text-secondary-600 leading-relaxed max-w-3xl font-light">
-              Our expertise lies in evaluating and managing a wide range of mental health conditions with evidence-based treatments tailored to your unique needs.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-            {conditions.map((condition, index) => (
-              <div 
-                key={index}
-                className="group"
-              >
-                <div className="mb-6">
-                  <div className="w-16 h-16 bg-sage-100 rounded-full flex items-center justify-center group-hover:bg-sage-200 transition-colors duration-300">
-                    <Shield className="w-8 h-8 text-sage-600" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="space-y-10">
+              {/* Vision */}
+              <div className="bg-white p-8 rounded-2xl shadow-lg">
+                <div className="mb-4">
+                  <div className="text-secondary-500 text-sm tracking-widest uppercase font-light mb-3">
+                    OUR VISION
+                  </div>
+                  <div className="w-12 h-12 bg-sage-100 rounded-full flex items-center justify-center">
+                    <Heart className="w-6 h-6 text-sage-600" />
                   </div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-serif text-secondary-800 mb-4 leading-tight">
-                  {condition}
-                </h3>
-                <p className="text-lg text-secondary-600 leading-relaxed font-light">
-                  Expert evaluation and personalized treatment approaches.
+                <p className="text-lg md:text-xl text-secondary-600 leading-relaxed font-light">
+                  Our vision is to provide mental wellness, competent and quality care to improve the lives of individuals across the life span and their families to improve their quality of life.
                 </p>
               </div>
-            ))}
+
+              {/* Mission */}
+              <div className="bg-white p-8 rounded-2xl shadow-lg">
+                <div className="mb-4">
+                  <div className="text-secondary-500 text-sm tracking-widest uppercase font-light mb-3">
+                    OUR MISSION
+                  </div>
+                  <div className="w-12 h-12 bg-sage-100 rounded-full flex items-center justify-center">
+                    <Heart className="w-6 h-6 text-sage-600" />
+                  </div>
+                </div>
+                <p className="text-lg md:text-xl text-secondary-600 leading-relaxed font-light">
+                  To promote mental health awareness, empower individuals and increase access to treatment and services for individuals with mental illnesses.
+                </p>
+              </div>
+            </div>
+            <div className="relative lg:order-first">
+              <img 
+                src="/images/aboutus/ourmission.jpg" 
+                alt="We Care Wellness - Our Vision and Mission" 
+                className="w-full h-[450px] lg:h-[550px] object-cover rounded-2xl shadow-2xl"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent rounded-2xl"></div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Team Section */}
-      <section className="bg-white py-24 lg:py-32">
+      <section className="bg-white py-16 lg:py-20">
         <div className="w-full px-8 sm:px-12 lg:px-20 xl:px-24">
-          <div className="mb-20 lg:mb-28">
-            <div className="text-secondary-500 text-base tracking-widest uppercase font-light mb-6">
+          <div className="text-center mb-12 lg:mb-16">
+            <div className="text-secondary-500 text-base tracking-widest uppercase font-light mb-4">
               MEET OUR EXPERIENCED TEAM
             </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-secondary-800 leading-tight mb-8 max-w-4xl">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-secondary-800 leading-tight mb-4 max-w-3xl mx-auto">
               Dedicated Professionals Committed to Your Wellness
             </h2>
-            <p className="text-xl md:text-2xl text-secondary-600 leading-relaxed max-w-3xl font-light">
+            <p className="text-lg md:text-xl text-secondary-600 leading-relaxed max-w-2xl mx-auto font-light">
               Our team brings years of clinical expertise and a genuine passion for helping individuals achieve their mental health goals.
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 max-w-5xl mx-auto">
             {teamMembers.map((member, index) => (
               <div 
                 key={index}
-                className="group text-center"
+                className="group bg-sage-50 p-8 rounded-2xl hover:shadow-xl transition-shadow duration-300"
               >
-                <div className="mb-8">
+                <div className="mb-6">
                   <div className="relative inline-block">
                     <img 
                       src={member.image} 
                       alt={member.name} 
-                      className="w-48 h-48 lg:w-56 lg:h-56 rounded-2xl object-cover shadow-2xl group-hover:shadow-3xl transition-shadow duration-300"
+                      className="w-40 h-40 lg:w-48 lg:h-48 rounded-2xl object-cover shadow-lg"
                     />
-                    <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-sage-100 rounded-full flex items-center justify-center shadow-lg">
+                    <div className="absolute -bottom-3 -right-3 w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg">
                       {member.icon}
                     </div>
                   </div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-serif text-secondary-800 mb-4 leading-tight">
+                <h3 className="text-2xl md:text-3xl font-serif text-secondary-800 mb-2 leading-tight">
                   {member.name}
                 </h3>
-                <p className="text-lg text-secondary-600 leading-relaxed font-light">
+                <p className="text-base md:text-lg text-secondary-600 leading-relaxed font-light">
                   {member.title}
                 </p>
               </div>
@@ -158,27 +140,26 @@ const AboutUs = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="bg-white py-24 lg:py-32">
-        <div className="w-full px-8 sm:px-12 lg:px-20 xl:px-24">
-          <div className="text-center space-y-8">
-            <div className="mb-12">
-              <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif text-secondary-800 leading-tight mb-8">
-                Ready to Begin Your Journey?
-              </h3>
-              <p className="text-xl md:text-2xl text-secondary-600 leading-relaxed max-w-3xl mx-auto font-light">
-                Take the first step towards better mental health with our compassionate and experienced team.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <section className="relative bg-gradient-to-br from-sage-600 to-sage-700 py-16 lg:py-20">
+        <div className="absolute inset-0 bg-[url('/images/hero/WeCareWellness_Hero1.png')] opacity-10 bg-cover bg-center"></div>
+        <div className="relative w-full px-8 sm:px-12 lg:px-20 xl:px-24">
+          <div className="text-center space-y-6">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-serif text-white leading-tight">
+              Ready to Begin Your Journey?
+            </h3>
+            <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto font-light">
+              Take the first step towards better mental health with our compassionate and experienced team.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
               <button
                 onClick={() => window.location.href = '/contact'}
-                className="px-10 py-5 bg-secondary-200 hover:bg-secondary-300 text-secondary-800 transition-all duration-300 text-base tracking-widest uppercase font-medium rounded-full"
+                className="px-8 py-4 bg-white hover:bg-gray-100 text-sage-700 transition-all duration-300 text-sm tracking-widest uppercase font-medium rounded-full shadow-lg"
               >
                 CONTACT US TODAY
               </button>
               <button
                 onClick={() => window.location.href = '/book-appointment'}
-                className="px-10 py-5 bg-sage-600 hover:bg-sage-700 text-white transition-all duration-300 text-base tracking-widest uppercase font-medium rounded-full"
+                className="px-8 py-4 bg-secondary-800 hover:bg-secondary-900 text-white transition-all duration-300 text-sm tracking-widest uppercase font-medium rounded-full shadow-lg"
               >
                 BOOK AN APPOINTMENT
               </button>
