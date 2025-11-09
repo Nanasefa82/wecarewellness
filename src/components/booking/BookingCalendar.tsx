@@ -1,9 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, CheckCircle } from 'lucide-react';
 import { useAvailability } from '../../hooks/useAvailability';
 import { AvailabilitySlot } from '../../types/booking';
-import { format, addDays, startOfWeek, startOfMonth, endOfMonth, isSameDay, parseISO, addMonths, subMonths, eachDayOfInterval } from 'date-fns';
+import { format, addDays, startOfWeek, startOfMonth, endOfMonth, isSameDay, addMonths, subMonths, eachDayOfInterval } from 'date-fns';
+
+// Helper to parse UTC timestamps correctly
+const parseUTCDate = (dateString: string): Date => {
+    // The date comes from DB as UTC (e.g., "2025-11-10 09:00:00+00")
+    // Parse it as a proper Date object - the +00 suffix ensures it's treated as UTC
+    const date = new Date(dateString);
+    return date;
+};
 
 const BookingCalendar: React.FC = () => {
     const navigate = useNavigate();
@@ -16,44 +24,44 @@ const BookingCalendar: React.FC = () => {
     const [bookingSuccess, setBookingSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const loadAvailableSlots = useCallback(async () => {
-        setLoading(true);
-        try {
-            const monthStart = startOfMonth(selectedDate);
-            const monthEnd = endOfMonth(selectedDate);
-            const calendarStart = startOfWeek(monthStart);
-            const calendarEnd = addDays(startOfWeek(monthEnd), 6);
-            const startDate = format(calendarStart, 'yyyy-MM-dd');
-            const endDate = format(calendarEnd, 'yyyy-MM-dd');
-            console.log('📅 BookingCalendar: Loading slots for month range:', { startDate, endDate });
-
-            // Use direct query method with timeout
-            console.log('🔍 Using direct query method with 5s timeout...');
-            
-            const timeoutPromise = new Promise<never>((_, reject) =>
-                setTimeout(() => reject(new Error('Query timeout')), 5000)
-            );
-            
-            const queryPromise = getAvailabilitySlots(undefined, startDate, endDate);
-            
-            try {
-                const slots = await Promise.race([queryPromise, timeoutPromise]);
-                console.log('📅 Direct query returned:', slots);
-                setAvailableSlots(slots || []);
-            } catch (timeoutError) {
-                console.error('⏰ Query timed out, using empty slots');
-                setAvailableSlots([]);
-            }
-        } catch (error) {
-            console.error('❌ BookingCalendar: Error loading available slots:', error);
-        } finally {
-            setLoading(false);
-        }
-    }, [selectedDate, getAvailabilitySlots]);
-
     useEffect(() => {
+        const loadAvailableSlots = async () => {
+            setLoading(true);
+            try {
+                const monthStart = startOfMonth(selectedDate);
+                const monthEnd = endOfMonth(selectedDate);
+                const calendarStart = startOfWeek(monthStart);
+                const calendarEnd = addDays(startOfWeek(monthEnd), 6);
+                const startDate = format(calendarStart, 'yyyy-MM-dd');
+                const endDate = format(calendarEnd, 'yyyy-MM-dd');
+                console.log('📅 BookingCalendar: Loading slots for month range:', { startDate, endDate });
+
+                // Use direct query method with timeout
+                console.log('🔍 Using direct query method with 5s timeout...');
+                
+                const timeoutPromise = new Promise<never>((_, reject) =>
+                    setTimeout(() => reject(new Error('Query timeout')), 5000)
+                );
+                
+                const queryPromise = getAvailabilitySlots(undefined, startDate, endDate);
+                
+                try {
+                    const slots = await Promise.race([queryPromise, timeoutPromise]);
+                    console.log('📅 Direct query returned:', slots);
+                    setAvailableSlots(slots || []);
+                } catch (timeoutError) {
+                    console.error('⏰ Query timed out, using empty slots');
+                    setAvailableSlots([]);
+                }
+            } catch (error) {
+                console.error('❌ BookingCalendar: Error loading available slots:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         loadAvailableSlots();
-    }, [loadAvailableSlots]);
+    }, [selectedDate]); // Only depend on selectedDate, not getAvailabilitySlots
 
     const handleSlotSelect = (slot: AvailabilitySlot) => {
         // Store slot information in localStorage to pass to booking form page
@@ -104,9 +112,13 @@ const BookingCalendar: React.FC = () => {
     };
 
     const getSlotsForDate = (date: Date) => {
-        return availableSlots.filter(slot =>
-            isSameDay(parseISO(slot.start_time), date)
-        );
+        return availableSlots.filter(slot => {
+            const slotDate = parseUTCDate(slot.start_time);
+            // Compare just the date parts (year, month, day) in UTC
+            return slotDate.getUTCFullYear() === date.getFullYear() &&
+                   slotDate.getUTCMonth() === date.getMonth() &&
+                   slotDate.getUTCDate() === date.getDate();
+        });
     };
 
     if (bookingSuccess) {
@@ -253,7 +265,7 @@ const BookingCalendar: React.FC = () => {
                                                                     >
                                                                         <div className="flex items-center justify-center space-x-1">
                                                                             <Clock className="w-3 h-3" />
-                                                                            <span className="font-medium">{format(parseISO(slot.start_time), 'h:mm a')}</span>
+                                                                            <span className="font-medium">{format(parseUTCDate(slot.start_time), 'h:mm a')}</span>
                                                                         </div>
                                                                     </button>
                                                                 ))}
@@ -329,7 +341,7 @@ interface SlotSelectionModalProps {
 }
 
 const SlotSelectionModal: React.FC<SlotSelectionModalProps> = ({ slots, onClose, onSlotSelect }) => {
-    const selectedDate = slots[0] ? parseISO(slots[0].start_time) : new Date();
+    const selectedDate = slots[0] ? parseUTCDate(slots[0].start_time) : new Date();
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -369,7 +381,7 @@ const SlotSelectionModal: React.FC<SlotSelectionModalProps> = ({ slots, onClose,
                                         <div className="flex items-center space-x-2 text-sage-700 font-medium">
                                             <Clock className="w-4 h-4" />
                                             <span>
-                                                {format(parseISO(slot.start_time), 'h:mm a')} - {format(parseISO(slot.end_time), 'h:mm a')}
+                                                {format(parseUTCDate(slot.start_time), 'h:mm a')} - {format(parseUTCDate(slot.end_time), 'h:mm a')}
                                             </span>
                                         </div>
                                         <div className="text-sm text-secondary-600 mt-1">

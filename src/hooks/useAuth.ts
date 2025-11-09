@@ -134,17 +134,24 @@ export const useAuth = () => {
                     }
                 } else {
                     // For known admin user, use hardcoded profile immediately
-                    if (session.user.id === '8285ede3-ed62-493f-a3b6-c7a3ed21338c') {
+                    if (session.user.id === '8285ede3-ed62-493f-a3b6-c7a3ed21338c' || session.user.email === 'nanasefa@gmail.com') {
                         profile = {
                             id: session.user.id,
-                            email: 'nanasefa@gmail.com',
-                            full_name: 'Admin User',
+                            email: session.user.email || 'nanasefa@gmail.com',
+                            full_name: 'Dr. Nana Sefa',
                             role: 'doctor' as const,
                             is_active: true,
                             created_at: '2025-11-04T15:45:11.146078Z',
                             updated_at: '2025-11-05T15:07:19.767345Z'
                         };
                         console.log('🎯 Using hardcoded admin profile (fetch failed)');
+                        
+                        // Store it for next time
+                        try {
+                            localStorage.setItem(`profile_${session.user.id}`, JSON.stringify(profile));
+                        } catch (error) {
+                            console.log('❌ Error storing hardcoded profile:', error);
+                        }
                     } else {
                         // Try localStorage as fallback for other users
                         const cachedProfile = localStorage.getItem(`profile_${session.user.id}`);
@@ -299,6 +306,15 @@ export const useAuth = () => {
             } catch (error) {
                 console.log('❌ Error clearing stored profile:', error);
             }
+        }
+
+        // Clear in-memory cache
+        try {
+            const { cache } = await import('../utils/cache');
+            cache.clear();
+            console.log('🗑️ Cleared in-memory cache');
+        } catch (error) {
+            console.log('❌ Error clearing cache:', error);
         }
 
         // Clear auth state immediately for better UX
