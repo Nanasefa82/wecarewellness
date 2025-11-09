@@ -1,0 +1,11 @@
+# Add your Supabase credentials here
+# Get these from your Supabase project dashboard
+
+# Replace these with your actual Supabase values:
+VITE_SUPABASE_URL=https://tfpkkleonhhzexbmbped.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmcGtrbGVvbmhoemV4Ym1icGVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyNTczMzksImV4cCI6MjA3NzgzMzMzOX0.wa12Ta4lIvDwQ63wrm6SzCoWRExBXhJ87-SGbd1B6bI
+VITE_SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmcGtrbGVvbmhoemV4Ym1icGVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjI1NzMzOSwiZXhwIjoyMDc3ODMzMzM5fQ.prKFJNf3BbuMqlJDqtBCN9o1b08Kwb_AQ-N28fcCNkA
+
+# Email Service Configuration
+REACT_APP_EMAIL_API_URL=http://localhost:3001/api/email
+REACT_APP_FROM_EMAIL=noreply@wecarewellnessllc.com
