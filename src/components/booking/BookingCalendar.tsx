@@ -146,14 +146,14 @@ const BookingCalendar: React.FC = () => {
     }
 
     return (
-        <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 py-6">
-            <div className="w-full max-w-[85%] mx-auto">
+        <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6">
+            <div className="w-full max-w-full md:max-w-[95%] lg:max-w-[85%] mx-auto">
             {/* Header */}
-            <div className="text-center mb-8">
-                <h1 className="text-3xl md:text-4xl font-serif text-secondary-800 mb-4">
+            <div className="text-center mb-6 md:mb-8 px-2">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif text-secondary-800 mb-3 md:mb-4">
                     Book Your Consultation
                 </h1>
-                <p className="text-lg text-secondary-600 max-w-2xl mx-auto mb-4">
+                <p className="text-base md:text-lg text-secondary-600 max-w-2xl mx-auto mb-3 md:mb-4">
                     Choose an available time slot that works best for you. We're here to support your mental health journey.
                 </p>
 
@@ -178,21 +178,23 @@ const BookingCalendar: React.FC = () => {
             </div>
 
             {/* Month Navigation */}
-            <div className="flex items-center justify-between bg-white rounded-lg border border-gray-200 p-4 mb-6">
+            <div className="flex items-center justify-between bg-white rounded-lg border border-gray-200 p-3 md:p-4 mb-4 md:mb-6">
                 <button
                     onClick={() => setSelectedDate(subMonths(selectedDate, 1))}
-                    className="px-4 py-2 text-secondary-600 hover:text-secondary-800 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="px-2 sm:px-3 md:px-4 py-2 text-sm md:text-base text-secondary-600 hover:text-secondary-800 hover:bg-gray-50 rounded-lg transition-colors"
                 >
-                    ← Previous Month
+                    <span className="hidden sm:inline">← Previous</span>
+                    <span className="sm:hidden">←</span>
                 </button>
-                <h2 className="text-lg font-medium text-secondary-800">
+                <h2 className="text-base sm:text-lg font-medium text-secondary-800">
                     {format(selectedDate, 'MMMM yyyy')}
                 </h2>
                 <button
                     onClick={() => setSelectedDate(addMonths(selectedDate, 1))}
-                    className="px-4 py-2 text-secondary-600 hover:text-secondary-800 hover:bg-gray-50 rounded-lg transition-colors"
+                    className="px-2 sm:px-3 md:px-4 py-2 text-sm md:text-base text-secondary-600 hover:text-secondary-800 hover:bg-gray-50 rounded-lg transition-colors"
                 >
-                    Next Month →
+                    <span className="hidden sm:inline">Next →</span>
+                    <span className="sm:hidden">→</span>
                 </button>
             </div>
 
@@ -208,8 +210,9 @@ const BookingCalendar: React.FC = () => {
                         {/* Days of week header */}
                         <div className="grid grid-cols-7 divide-x divide-gray-200 bg-gray-50">
                             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                                <div key={day} className="p-3 text-center text-sm font-medium text-secondary-700">
-                                    {day}
+                                <div key={day} className="p-2 md:p-3 text-center text-xs md:text-sm font-medium text-secondary-700">
+                                    <span className="hidden sm:inline">{day}</span>
+                                    <span className="sm:hidden">{day.charAt(0)}</span>
                                 </div>
                             ))}
                         </div>
@@ -224,7 +227,7 @@ const BookingCalendar: React.FC = () => {
                                     const isCurrentMonth = format(date, 'M') === format(selectedDate, 'M');
 
                                     return (
-                                        <div key={dayIndex} className={`p-3 min-h-[160px] ${!isCurrentMonth ? 'bg-gray-50' : ''}`}>
+                                        <div key={dayIndex} className={`p-1 sm:p-2 md:p-3 min-h-[100px] sm:min-h-[120px] md:min-h-[160px] ${!isCurrentMonth ? 'bg-gray-50' : ''}`}>
                                             <div className={`text-center mb-2 ${isToday ? 'text-sage-600 font-medium' : isCurrentMonth ? 'text-secondary-700' : 'text-gray-400'}`}>
                                                 <div className={`text-sm ${isToday ? 'bg-sage-100 rounded-full w-6 h-6 flex items-center justify-center mx-auto font-medium' : ''}`}>
                                                     {format(date, 'd')}

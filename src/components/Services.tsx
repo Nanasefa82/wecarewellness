@@ -63,18 +63,18 @@ const Services = () => {
     };
 
     return (
-        <section id="services" className="bg-white py-24 lg:py-32">
-            <div className="w-full px-8 sm:px-12 lg:px-20 xl:px-24">
+        <section id="services" className="bg-white py-12 sm:py-16 md:py-24 lg:py-32">
+            <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 2xl:px-24">
 
                 {/* Section Header */}
-                <div className="mb-20 lg:mb-28">
-                    <div className="text-secondary-500 text-base tracking-widest uppercase font-light mb-6">
+                <div className="mb-12 sm:mb-16 md:mb-20 lg:mb-28">
+                    <div className="text-secondary-500 text-xs sm:text-sm md:text-base tracking-widest uppercase font-light mb-4 md:mb-6">
                         OUR COMPREHENSIVE SERVICES
                     </div>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-secondary-800 leading-tight mb-8 max-w-4xl">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif text-secondary-800 leading-tight mb-4 sm:mb-6 md:mb-8 max-w-4xl">
                         Comprehensive Psychiatric & Counseling Services
                     </h2>
-                    <p className="text-xl md:text-2xl text-secondary-600 leading-relaxed max-w-3xl font-light">
+                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-secondary-600 leading-relaxed max-w-3xl font-light">
                         Experience full-spectrum, patient-centered psychiatric care tailored to your unique needs.
                         From medication management to therapy and coaching, our integrated services help restore balance and peace of mind.
                     </p>

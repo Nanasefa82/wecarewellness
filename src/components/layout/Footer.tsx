@@ -23,27 +23,27 @@ const Footer = () => {
 
     return (
         <footer className="bg-sage-50 text-secondary-700">
-            <div className="w-full px-8 sm:px-12 lg:px-20 xl:px-24 py-12 lg:py-16">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12 mb-8">
+            <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 2xl:px-24 py-8 sm:py-10 md:py-12 lg:py-16">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 mb-6 sm:mb-8">
 
                     {/* Company Info */}
-                    <div className="space-y-4">
-                        <h3 className="text-2xl md:text-3xl font-serif text-secondary-800">
+                    <div className="space-y-3 sm:space-y-4">
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-serif text-secondary-800">
                             We Care Wellness LLC
                         </h3>
-                        <p className="text-lg text-secondary-600 leading-relaxed font-light">
+                        <p className="text-base sm:text-lg text-secondary-600 leading-relaxed font-light">
                             Compassionate mental health services in Virginia.
                             Your mental health, your wellness, our priority.
                         </p>
 
                         {/* Contact Section */}
-                        <div className="space-y-3">
-                            <h4 className="text-xl font-medium text-secondary-800">Contact</h4>
-                            <div className="space-y-2 text-lg text-secondary-600">
+                        <div className="space-y-2 sm:space-y-3">
+                            <h4 className="text-lg sm:text-xl font-medium text-secondary-800">Contact</h4>
+                            <div className="space-y-1 sm:space-y-2 text-sm sm:text-base md:text-lg text-secondary-600">
                                 <p>
                                     <a
                                         href="mailto:info@wecarewellnessllc.com"
-                                        className="hover:text-sage-600 transition-colors"
+                                        className="hover:text-sage-600 transition-colors break-all"
                                     >
                                         info@wecarewellnessllc.com
                                     </a>
