@@ -30,6 +30,7 @@ import AboutUs from './components/AboutUs'
 import ContactUs from './components/ContactUs'
 import FeesInsurance from './components/FeesInsurance'
 import BookingFormPage from './components/BookingFormPage'
+import MedicationManagement from './components/MedicationManagement'
 import SupabaseTest from './components/debug/SupabaseTest'
 import AuthDebug from './components/debug/AuthDebug'
 import DatabaseSetup from './components/debug/DatabaseSetup'
@@ -104,6 +105,9 @@ function App() {
 
                     {/* Booking Form page */}
                     <Route path="/book-appointment-form" element={<BookingFormPage />} />
+
+                    {/* Medication Management page */}
+                    <Route path="/medication-management" element={<MedicationManagement />} />
 
                     {/* Legal pages */}
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />

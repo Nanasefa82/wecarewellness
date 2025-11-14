@@ -7,6 +7,7 @@ const Header = () => {
 
     const navigationLinks = [
         { href: '#services', label: 'Individual Therapy' },
+        { href: '/medication-management', label: 'Medication Management', isRoute: true },
         { href: '/about', label: 'About', isRoute: true },
         { href: '/contact', label: 'Contact', isRoute: true },
         { href: '/fees-insurance', label: 'Fees & Insurance', isRoute: true },
