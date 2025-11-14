@@ -54,24 +54,21 @@ const AvailabilityManager: React.FC = React.memo(() => {
     };
 
     const getSlotsForDate = (date: Date) => {
+        console.log('🔍 getSlotsForDate called for:', date.toDateString(), 'Total slots:', slots.length);
+
         const daySlots = slots.filter(slot => {
             const slotDate = new Date(slot.start_time);
             const isSame = isSameDay(slotDate, date);
-            if (slots.length > 0) {
-                console.log('🗓️ Checking slot for date:', {
-                    date: date.toDateString(),
-                    slotStartTime: slot.start_time,
-                    slotDate: slotDate.toDateString(),
-                    isSameDay: isSame
-                });
-            }
+            console.log('🗓️ Checking slot:', {
+                slotStartTime: slot.start_time,
+                slotDate: slotDate.toDateString(),
+                targetDate: date.toDateString(),
+                isSameDay: isSame
+            });
             return isSame;
         });
 
-        if (daySlots.length > 0) {
-            console.log('📅 Found', daySlots.length, 'slots for', date.toDateString());
-        }
-
+        console.log('📅 getSlotsForDate result:', daySlots.length, 'slots for', date.toDateString());
         return daySlots;
     };
 
@@ -91,6 +88,8 @@ const AvailabilityManager: React.FC = React.memo(() => {
             const endDate = format(calendarEnd, 'yyyy-MM-dd');
 
             const data = await getAvailabilitySlots(user.id, startDate, endDate);
+            console.log('🎯 reloadSlots: Received data:', data);
+            console.log('🎯 reloadSlots: Setting', data?.length || 0, 'slots');
             setSlots(data || []);
         } catch (error) {
             console.error('❌ Error reloading slots:', error);
@@ -600,10 +599,17 @@ const RecurringScheduleModal: React.FC<RecurringScheduleModalProps> = ({ onClose
 
         console.log('📝 RecurringScheduleModal: Form submitted with data:', formData);
 
+        // Validate that we have at least one day selected
+        const allDays = formData.timeSlots.flatMap(slot => slot.days || []);
+        if (allDays.length === 0) {
+            alert('Please select at least one day of the week');
+            return;
+        }
+
         const submitData = {
             startDate: formData.startDate,
             endDate: formData.endDate,
-            daysOfWeek: formData.timeSlots.flatMap(slot => slot.days || []),
+            daysOfWeek: allDays,
             timeSlots: formData.timeSlots.map(slot => ({
                 startTime: slot.start,
                 endTime: slot.end
@@ -613,7 +619,12 @@ const RecurringScheduleModal: React.FC<RecurringScheduleModalProps> = ({ onClose
 
         console.log('📤 RecurringScheduleModal: Submitting transformed data:', submitData);
 
-        onSubmit(submitData);
+        try {
+            onSubmit(submitData);
+        } catch (error) {
+            console.error('❌ Error submitting form:', error);
+            alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
     };
 
     const addTimeSlot = () => {

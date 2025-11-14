@@ -29,7 +29,7 @@ Experience full-spectrum, patient-centered **psychiatric care** tailored to your
 - [**Psychiatric Evaluations**](/services): Professional diagnosis and treatment planning for mental, emotional, and behavioral disorders.  
 - [**Medication Management**](/services): Safe, expert supervision to optimize your treatment outcomes.  
 - [**Psychotherapy & Counseling**](/services): Talk therapy to process emotions, navigate challenges, and foster healing.  
-- [**ADHD Testing**](/services): Accurate assessments and ongoing support for children and adults.  
+- [**ADHD Testing**](/services): Accurate assessments and ongoing support for adults.  
 - [**Substance Abuse Support**](/services): Compassionate recovery guidance in a judgment-free space.  
 - [**Marriage & Family Therapy**](/services): Strengthen communication and emotional connection within relationships.  
 - [**Life Coaching**](/services): Set goals, overcome barriers, and unlock your best self.  

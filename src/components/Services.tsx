@@ -32,7 +32,7 @@ const Services = () => {
         {
             id: 'adhd-testing',
             title: 'ADHD Assessment',
-            description: 'Accurate assessments and ongoing support for children and adults.',
+            description: 'Accurate assessments and ongoing support for adults.',
             icon: Focus
         },
         {
