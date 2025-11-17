@@ -27,7 +27,7 @@ interface ExtendedProfile extends Profile {
 }
 
 const UserManagement: React.FC = () => {
-    const { isAdmin } = useAuthContext();
+    const { isAdmin, isDoctor } = useAuthContext();
     const [users, setUsers] = useState<ExtendedProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -40,40 +40,54 @@ const UserManagement: React.FC = () => {
 
     // Load users on component mount
     useEffect(() => {
-        if (isAdmin) {
+        if (isAdmin || isDoctor) {
             loadUsers();
         }
-    }, [isAdmin]);
+    }, [isAdmin, isDoctor]);
 
     const loadUsers = async () => {
         try {
             setLoading(true);
             setError(null);
+            console.log('🔍 Loading users...');
 
-            // Fetch all profiles with optional doctor profile data
+            // Fetch all profiles first
             const { data: profiles, error: profilesError } = await supabase
                 .from('profiles')
-                .select(`
-                    *,
-                    doctor_profiles (
-                        id,
-                        name,
-                        specialization,
-                        bio
-                    )
-                `)
+                .select('*')
                 .order('created_at', { ascending: false });
+
+            console.log('📊 Profiles query result:', { profiles, profilesError });
 
             if (profilesError) {
                 throw profilesError;
             }
 
+            // Fetch doctor profiles separately
+            const { data: doctorProfiles, error: doctorError } = await supabase
+                .from('doctor_profiles')
+                .select('id, user_id, name, specialization, bio');
+
+            console.log('👨‍⚕️ Doctor profiles query result:', { doctorProfiles, doctorError });
+
+            // Don't throw error for doctor profiles if they don't exist
+            if (doctorError) {
+                console.warn('⚠️ Could not fetch doctor profiles:', doctorError);
+            }
+
+            // Create a map of doctor profiles by user_id for easy lookup
+            const doctorProfileMap = new Map<string, { id: string; name: string; specialization?: string; bio?: string }>();
+            doctorProfiles?.forEach(doctorProfile => {
+                doctorProfileMap.set(doctorProfile.user_id, doctorProfile);
+            });
+
             // Transform the data to match our interface
             const transformedUsers: ExtendedProfile[] = profiles?.map(profile => ({
                 ...profile,
-                doctor_profile: profile.doctor_profiles?.[0] || undefined
+                doctor_profile: doctorProfileMap.get(profile.id) || undefined
             })) || [];
 
+            console.log('👥 Transformed users:', transformedUsers);
             setUsers(transformedUsers);
         } catch (err) {
             console.error('Error loading users:', err);
@@ -145,13 +159,13 @@ const UserManagement: React.FC = () => {
     });
 
 
-    if (!isAdmin) {
+    if (!isAdmin && !isDoctor) {
         return (
             <div className="p-6">
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <div className="flex items-center space-x-2">
                         <AlertCircle className="w-5 h-5 text-red-600" />
-                        <p className="text-red-700">Access denied. Admin privileges required.</p>
+                        <p className="text-red-700">Access denied. Doctor or Admin privileges required.</p>
                     </div>
                 </div>
             </div>

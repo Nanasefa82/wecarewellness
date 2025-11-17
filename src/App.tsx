@@ -252,7 +252,7 @@ function App() {
                         path="/admin/users"
                         element={
                             <Suspense fallback={<PageLoader />}>
-                                <ProtectedRoute requireAdmin>
+                                <ProtectedRoute requireDoctor>
                                     <AdminDashboard>
                                         <Suspense fallback={<RouteLoader />}>
                                             <UserManagement />
