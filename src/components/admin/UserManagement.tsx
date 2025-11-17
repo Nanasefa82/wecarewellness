@@ -27,7 +27,7 @@ interface ExtendedProfile extends Profile {
 }
 
 const UserManagement: React.FC = () => {
-    const { isAdmin } = useAuthContext();
+    const { isAdmin, isDoctor } = useAuthContext();
     const [users, setUsers] = useState<ExtendedProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -145,13 +145,13 @@ const UserManagement: React.FC = () => {
     });
 
 
-    if (!isAdmin) {
+    if (!isAdmin && !isDoctor) {
         return (
             <div className="p-6">
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <div className="flex items-center space-x-2">
                         <AlertCircle className="w-5 h-5 text-red-600" />
-                        <p className="text-red-700">Access denied. Admin privileges required.</p>
+                        <p className="text-red-700">Access denied. Doctor or Admin privileges required.</p>
                     </div>
                 </div>
             </div>

@@ -44,6 +44,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ children }) => {
     console.log('🏠 AdminDashboard rendered with children:', !!children);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const { profile, signOut, isDoctor, isAdmin, user } = useAuthContext();
+    console.log('🔐 Current user roles:', { isAdmin, isDoctor, userRole: profile?.role, userEmail: user?.email });
     const { getDashboardStats } = useAppointments();
     const [stats, setStats] = useState<DashboardStatsData | null>(null);
     const navigate = useNavigate();
@@ -109,7 +110,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ children }) => {
             href: '/admin/availability',
             current: currentPath === '/admin/availability',
         },
-        ...(isAdmin ? [{
+        ...(isAdmin || isDoctor ? [{
             name: 'Users',
             icon: Users,
             href: '/admin/users',
