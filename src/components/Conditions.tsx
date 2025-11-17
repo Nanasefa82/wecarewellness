@@ -110,8 +110,10 @@ const Conditions = () => {
                             {/* Image Container */}
                             <div className="relative h-48 overflow-hidden">
                                 <div
-                                    className="w-full h-full bg-cover bg-center bg-no-repeat transition-transform duration-300 group-hover:scale-105"
-                                    style={{ backgroundImage: `url('${condition.image}')` }}
+                                    className="condition-card-bg"
+                                    style={{
+                                        '--bg-image': `url('${condition.image}')`
+                                    } as React.CSSProperties & { '--bg-image': string }}
                                 >
                                     {/* Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>

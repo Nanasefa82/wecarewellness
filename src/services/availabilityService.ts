@@ -89,16 +89,28 @@ export class AvailabilityService {
             // Skip weekends
             if (dayOfWeek === 0 || dayOfWeek === 6) continue;
 
-            // Create morning slots (9 AM - 12 PM)
+            // Create morning slots (9 AM - 12 PM) - using UTC to avoid timezone confusion
             for (let hour = 9; hour < 12; hour++) {
+                // Create date in UTC to match what would be stored in database
                 const slotDate = new Date(d);
-                slotDate.setHours(hour, 0, 0, 0);
+                // Set the time in local timezone, then adjust to store as if it were UTC
+                // This ensures 11am local shows as 11am in the calendar
+                const localHour = hour;
+                const utcDate = new Date(Date.UTC(
+                    slotDate.getFullYear(),
+                    slotDate.getMonth(),
+                    slotDate.getDate(),
+                    localHour,
+                    0,
+                    0,
+                    0
+                ));
 
                 slots.push({
-                    id: `mock-${slotDate.getTime()}-${hour}`,
+                    id: `mock-${utcDate.getTime()}-${hour}`,
                     doctor_id: doctorId,
-                    start_time: slotDate.toISOString(),
-                    end_time: new Date(slotDate.getTime() + 60 * 60 * 1000).toISOString(),
+                    start_time: utcDate.toISOString(),
+                    end_time: new Date(utcDate.getTime() + 60 * 60 * 1000).toISOString(),
                     is_available: true,
                     appointment_type: 'consultation',
                     created_at: new Date().toISOString(),
@@ -106,16 +118,27 @@ export class AvailabilityService {
                 });
             }
 
-            // Create afternoon slots (1 PM - 5 PM)
+            // Create afternoon slots (1 PM - 5 PM) - using UTC to avoid timezone confusion
             for (let hour = 13; hour < 17; hour++) {
+                // Create date in UTC to match what would be stored in database
                 const slotDate = new Date(d);
-                slotDate.setHours(hour, 0, 0, 0);
+                // Set the time in local timezone, then adjust to store as if it were UTC
+                const localHour = hour;
+                const utcDate = new Date(Date.UTC(
+                    slotDate.getFullYear(),
+                    slotDate.getMonth(),
+                    slotDate.getDate(),
+                    localHour,
+                    0,
+                    0,
+                    0
+                ));
 
                 slots.push({
-                    id: `mock-${slotDate.getTime()}-${hour}`,
+                    id: `mock-${utcDate.getTime()}-${hour}`,
                     doctor_id: doctorId,
-                    start_time: slotDate.toISOString(),
-                    end_time: new Date(slotDate.getTime() + 60 * 60 * 1000).toISOString(),
+                    start_time: utcDate.toISOString(),
+                    end_time: new Date(utcDate.getTime() + 60 * 60 * 1000).toISOString(),
                     is_available: true,
                     appointment_type: 'consultation',
                     created_at: new Date().toISOString(),

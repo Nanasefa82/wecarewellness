@@ -184,8 +184,22 @@ const AvailabilityManager: React.FC = React.memo(() => {
         }
     };
 
+    // Helper to parse UTC timestamps as local time (same as BookingCalendar)
+    const parseUTCDate = (dateString: string): Date => {
+        const utcDate = new Date(dateString);
+        const year = utcDate.getUTCFullYear();
+        const month = utcDate.getUTCMonth();
+        const date = utcDate.getUTCDate();
+        const hours = utcDate.getUTCHours();
+        const minutes = utcDate.getUTCMinutes();
+        const seconds = utcDate.getUTCSeconds();
+        return new Date(year, month, date, hours, minutes, seconds);
+    };
+
     const handleDeleteSlot = (slotId: string, startTime: string, endTime: string) => {
-        const slotInfo = `${new Date(startTime).toLocaleDateString()} from ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} to ${new Date(endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        const startDate = parseUTCDate(startTime);
+        const endDate = parseUTCDate(endTime);
+        const slotInfo = `${startDate.toLocaleDateString()} from ${startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} to ${endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 
         setDeleteConfirm({
             isOpen: true,
@@ -454,8 +468,15 @@ const CreateSlotModal: React.FC<CreateSlotModalProps> = ({ onClose, onSubmit, do
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const startDateTime = new Date(`${formData.date}T${formData.startTime}`);
-        const endDateTime = new Date(`${formData.date}T${formData.endTime}`);
+        // Create dates in local time but store as UTC to match our display logic
+        // This ensures that when a user selects 11:00 AM, it shows as 11:00 AM in the calendar
+        const [year, month, day] = formData.date.split('-').map(Number);
+        const [startHour, startMinute] = formData.startTime.split(':').map(Number);
+        const [endHour, endMinute] = formData.endTime.split(':').map(Number);
+
+        // Create UTC dates that represent the local time
+        const startDateTime = new Date(Date.UTC(year, month - 1, day, startHour, startMinute));
+        const endDateTime = new Date(Date.UTC(year, month - 1, day, endHour, endMinute));
 
         onSubmit({
             doctor_id: doctorId,
