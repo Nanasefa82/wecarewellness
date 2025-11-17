@@ -59,8 +59,8 @@ const BookingCalendar: React.FC = () => {
                     const slots = await Promise.race([queryPromise, timeoutPromise]);
                     console.log('📅 Direct query returned:', slots);
                     setAvailableSlots(slots || []);
-                } catch (timeoutError) {
-                    console.error('⏰ Query timed out, using empty slots');
+                } catch (error) {
+                    console.error('⏰ Query timed out, using empty slots:', error);
                     setAvailableSlots([]);
                 }
             } catch (error) {
@@ -71,7 +71,7 @@ const BookingCalendar: React.FC = () => {
         };
 
         loadAvailableSlots();
-    }, [selectedDate]); // Only depend on selectedDate, not getAvailabilitySlots
+    }, [selectedDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleSlotSelect = (slot: AvailabilitySlot) => {
         // Store slot information in localStorage to pass to booking form page

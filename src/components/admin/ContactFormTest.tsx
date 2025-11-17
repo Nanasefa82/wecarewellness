@@ -31,50 +31,58 @@ const ContactFormTest = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="test-first-name" className="block text-sm font-medium text-gray-700 mb-1">
                         First Name
                     </label>
                     <input
+                        id="test-first-name"
                         type="text"
                         value={testData.firstName}
                         onChange={(e) => setTestData(prev => ({ ...prev, firstName: e.target.value }))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-sage-500 focus:border-sage-500"
+                        placeholder="Enter first name"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="test-last-name" className="block text-sm font-medium text-gray-700 mb-1">
                         Last Name
                     </label>
                     <input
+                        id="test-last-name"
                         type="text"
                         value={testData.lastName}
                         onChange={(e) => setTestData(prev => ({ ...prev, lastName: e.target.value }))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-sage-500 focus:border-sage-500"
+                        placeholder="Enter last name"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="test-email" className="block text-sm font-medium text-gray-700 mb-1">
                         Email
                     </label>
                     <input
+                        id="test-email"
                         type="email"
                         value={testData.email}
                         onChange={(e) => setTestData(prev => ({ ...prev, email: e.target.value }))}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-sage-500 focus:border-sage-500"
+                        placeholder="Enter email address"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="test-message" className="block text-sm font-medium text-gray-700 mb-1">
                         Message
                     </label>
                     <textarea
+                        id="test-message"
                         value={testData.message}
                         onChange={(e) => setTestData(prev => ({ ...prev, message: e.target.value }))}
                         rows={4}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-sage-500 focus:border-sage-500"
+                        placeholder="Enter your message"
                     />
                 </div>
 

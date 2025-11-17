@@ -109,6 +109,7 @@ const Conditions = () => {
                         >
                             {/* Image Container */}
                             <div className="relative h-48 overflow-hidden">
+                                {/* CSS custom property for dynamic background - not inline styling */}
                                 <div
                                     className="condition-card-bg"
                                     style={{

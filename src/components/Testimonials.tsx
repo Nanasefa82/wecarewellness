@@ -80,6 +80,7 @@ const Testimonials = () => {
 
                             {/* Client Info */}
                             <div className="flex items-center space-x-4">
+                                {/* CSS custom property for dynamic avatar background */}
                                 <div
                                     className="testimonial-avatar-bg"
                                     style={{

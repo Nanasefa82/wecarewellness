@@ -89,7 +89,7 @@ const Hero = () => {
                             index === currentSlide ? 'opacity-100' : 'opacity-0'
                         }`}
                     >
-                        {/* Background Image */}
+                        {/* Background Image - CSS custom property for dynamic background */}
                         <div
                             className="hero-slide-bg"
                             style={{
