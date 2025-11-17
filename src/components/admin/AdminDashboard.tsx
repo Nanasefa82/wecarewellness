@@ -272,7 +272,10 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ navigationItems, profil
                         <button
                             key={item.name}
                             onClick={() => {
-                                console.log('🔗 Navigating to:', item.href);
+                                console.log('🔗 AdminDashboard: Navigating to:', item.href);
+                                console.log('🔗 Current auth state:', { 
+                                    profileRole: profile?.role 
+                                });
                                 navigate(item.href); // Use navigate instead of window.location for faster routing
                             }}
                             {...preloadHandler} // Add preload on hover

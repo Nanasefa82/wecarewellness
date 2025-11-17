@@ -89,12 +89,12 @@ const Hero = () => {
                             index === currentSlide ? 'opacity-100' : 'opacity-0'
                         }`}
                     >
-                        {/* Background Image */}
+                        {/* Background Image - CSS custom property for dynamic background */}
                         <div
-                            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                            className="hero-slide-bg"
                             style={{
-                                backgroundImage: `url('${slide.image}')`
-                            }}
+                                '--bg-image': `url('${slide.image}')`
+                            } as React.CSSProperties & { '--bg-image': string }}
                         >
                             {/* Overlay for better text readability */}
                             <div className="absolute inset-0 bg-black/40"></div>

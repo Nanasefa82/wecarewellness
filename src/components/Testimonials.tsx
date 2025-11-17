@@ -80,11 +80,12 @@ const Testimonials = () => {
 
                             {/* Client Info */}
                             <div className="flex items-center space-x-4">
+                                {/* CSS custom property for dynamic avatar background */}
                                 <div
-                                    className="w-16 h-16 bg-cover bg-center bg-no-repeat rounded-full border-3 border-white shadow-md"
+                                    className="testimonial-avatar-bg"
                                     style={{
-                                        backgroundImage: `url('${testimonial.image}')`
-                                    }}
+                                        '--bg-image': `url('${testimonial.image}')`
+                                    } as React.CSSProperties & { '--bg-image': string }}
                                 ></div>
                                 <div>
                                     <div className="font-medium text-secondary-800 text-lg">

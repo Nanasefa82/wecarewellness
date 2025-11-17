@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase';
 const DebugLogin: React.FC = () => {
     const [email, setEmail] = useState('nanasefa@gmail.com');
     const [password, setPassword] = useState('');
-    const [debugInfo, setDebugInfo] = useState<any>(null);
+    const [debugInfo, setDebugInfo] = useState<Record<string, unknown> | null>(null);
     const [loading, setLoading] = useState(false);
 
     const { signIn, user, profile, isAuthenticated, isAdmin, isDoctor } = useAuthContext();
@@ -76,21 +76,25 @@ const DebugLogin: React.FC = () => {
 
                 <div className="space-y-4 mb-6">
                     <div>
-                        <label className="block text-sm font-medium mb-2">Email</label>
+                        <label htmlFor="debug-email" className="block text-sm font-medium mb-2">Email</label>
                         <input
+                            id="debug-email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full px-3 py-2 border rounded-lg"
+                            placeholder="Enter your email"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium mb-2">Password</label>
+                        <label htmlFor="debug-password" className="block text-sm font-medium mb-2">Password</label>
                         <input
+                            id="debug-password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full px-3 py-2 border rounded-lg"
+                            placeholder="Enter your password"
                         />
                     </div>
                     <button

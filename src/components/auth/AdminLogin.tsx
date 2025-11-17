@@ -12,27 +12,22 @@ const AdminLogin: React.FC = () => {
         console.log('🔄 AdminLogin useEffect:', { loading, isAuthenticated, profile: !!profile, isAdmin, isDoctor });
 
         if (!loading && isAuthenticated) {
-            // Check if we have a profile or if enough time has passed
-            if (profile) {
-                console.log('✅ AdminLogin: Profile loaded, checking roles');
-                if (isAdmin || isDoctor) {
-                    console.log('✅ AdminLogin: User has admin/doctor role, navigating to dashboard');
-                    navigate('/admin/dashboard');
-                } else {
-                    console.log('❌ AdminLogin: User lacks admin/doctor privileges');
-                    alert('Access denied. You need admin or doctor privileges.');
-                }
-            } else {
-                // If no profile after 3 seconds, try to proceed anyway for known admin users
+            // Check if we have a profile with proper roles
+            if (profile && (isAdmin || isDoctor)) {
+                console.log('✅ AdminLogin: User has admin/doctor role, navigating to dashboard');
+                navigate('/admin/dashboard');
+            } else if (profile && !isAdmin && !isDoctor) {
+                console.log('❌ AdminLogin: User lacks admin/doctor privileges');
+                alert('Access denied. You need admin or doctor privileges.');
+            } else if (!profile) {
+                // If no profile after 1.5 seconds, try to proceed anyway for authenticated users
                 console.log('⚠️ AdminLogin: No profile loaded, setting timeout');
                 const timeoutId = setTimeout(() => {
-                    console.log('⏰ AdminLogin: Profile timeout, checking if user should have access');
-                    // For the known admin email, allow access even without profile
+                    console.log('⏰ AdminLogin: Profile timeout, allowing access for authenticated user');
                     if (isAuthenticated) {
-                        console.log('🎯 AdminLogin: Allowing access due to timeout');
                         navigate('/admin/dashboard');
                     }
-                }, 3000);
+                }, 1500); // Reduced timeout to match other components
 
                 return () => clearTimeout(timeoutId);
             }

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, Session } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -12,8 +12,54 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true
+    },
+    global: {
+        headers: {
+            'x-client-info': 'wecare-wellness-app'
+        }
     }
 });
+
+// Test Supabase connection
+export const testSupabaseConnection = async (): Promise<boolean> => {
+    try {
+        console.log('🔗 Testing Supabase connection...');
+        const { error } = await supabase.from('profiles').select('count').limit(1);
+        
+        if (error) {
+            console.error('❌ Supabase connection test failed:', error);
+            return false;
+        }
+        
+        console.log('✅ Supabase connection test successful');
+        return true;
+    } catch (error: unknown) {
+        console.error('💥 Supabase connection test exception:', error);
+        return false;
+    }
+};
+
+// Clear potentially stale cache after Supabase restart
+export const clearSupabaseCache = (): void => {
+    try {
+        console.log('🗑️ Clearing Supabase-related cache...');
+        const keys = Object.keys(localStorage);
+        const supabaseKeys = keys.filter(key => 
+            key.startsWith('profile_') || 
+            key.startsWith('supabase.') ||
+            key.includes('auth')
+        );
+        
+        supabaseKeys.forEach(key => {
+            localStorage.removeItem(key);
+            console.log(`🗑️ Removed cache key: ${key}`);
+        });
+        
+        console.log(`✅ Cleared ${supabaseKeys.length} cache entries`);
+    } catch (error) {
+        console.error('❌ Error clearing cache:', error);
+    }
+};
 
 // Database type definitions for better TypeScript support
 export type Database = {
@@ -28,7 +74,7 @@ export type Database = {
                     bio: string | null;
                     default_appointment_duration: number;
                     buffer_time: number;
-                    working_hours: any;
+                    working_hours: Record<string, unknown>;
                     created_at: string;
                     updated_at: string;
                 };
@@ -40,7 +86,7 @@ export type Database = {
                     bio?: string | null;
                     default_appointment_duration?: number;
                     buffer_time?: number;
-                    working_hours?: any;
+                    working_hours?: Record<string, unknown>;
                     created_at?: string;
                     updated_at?: string;
                 };
@@ -52,7 +98,7 @@ export type Database = {
                     bio?: string | null;
                     default_appointment_duration?: number;
                     buffer_time?: number;
-                    working_hours?: any;
+                    working_hours?: Record<string, unknown>;
                     created_at?: string;
                     updated_at?: string;
                 };
@@ -156,7 +202,7 @@ export type Database = {
                     doctor_id_param: string;
                     start_date: string;
                     end_date: string;
-                    time_slots: any;
+                    time_slots: Record<string, unknown>[];
                     appointment_type_param?: string;
                 };
                 Returns: number;
@@ -224,7 +270,7 @@ export const auth = {
 
     getSession: () => supabase.auth.getSession(),
 
-    onAuthStateChange: (callback: (event: string, session: any) => void) =>
+    onAuthStateChange: (callback: (event: string, session: Session | null) => void) =>
         supabase.auth.onAuthStateChange(callback),
 };
 

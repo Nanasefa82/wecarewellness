@@ -44,4 +44,24 @@
     .container-custom {
         @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
     }
+
+    .hero-slide-bg {
+        @apply absolute inset-0 bg-cover bg-center bg-no-repeat;
+        background-image: var(--bg-image);
+    }
+
+    .why-choose-us-bg {
+        @apply w-full h-[500px] lg:h-[600px] xl:h-[700px] bg-cover bg-center bg-no-repeat rounded-lg shadow-2xl;
+        background-image: url('/images/wellness_images/helena-lopes-_SzvRwdFo6o-unsplash.jpg');
+    }
+
+    .condition-card-bg {
+        @apply w-full h-full bg-cover bg-center bg-no-repeat transition-transform duration-300 group-hover:scale-105;
+        background-image: var(--bg-image);
+    }
+
+    .testimonial-avatar-bg {
+        @apply w-16 h-16 bg-cover bg-center bg-no-repeat rounded-full border-4 border-white shadow-md;
+        background-image: var(--bg-image);
+    }
 }

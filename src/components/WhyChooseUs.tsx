@@ -58,12 +58,7 @@ const WhyChooseUs = () => {
                     {/* Left Side - Image */}
                     <div className="order-2 lg:order-1">
                         <div className="relative">
-                            <div
-                                className="w-full h-[500px] lg:h-[600px] xl:h-[700px] bg-cover bg-center bg-no-repeat rounded-lg shadow-2xl"
-                                style={{
-                                    backgroundImage: `url('/images/wellness_images/helena-lopes-_SzvRwdFo6o-unsplash.jpg')`
-                                }}
-                            >
+                            <div className="why-choose-us-bg">
                                 <div className="absolute inset-0 bg-white bg-opacity-5 rounded-lg"></div>
                             </div>
 

@@ -246,6 +246,7 @@ const ContactSubmissionsManager = () => {
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
                             className="pl-10 pr-8 py-2 bg-gray-800 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500"
+                            title="Filter submissions by status"
                         >
                             <option value="all">All Status</option>
                             <option value="new">New</option>
@@ -348,6 +349,7 @@ const ContactSubmissionsManager = () => {
                                         value={selectedSubmission.status || 'new'}
                                         onChange={(e) => handleStatusUpdate(selectedSubmission.id!, e.target.value as ContactFormData['status'])}
                                         className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 text-white rounded-md shadow-sm focus:ring-sage-500 focus:border-sage-500 sm:text-sm"
+                                        title="Update submission status"
                                     >
                                         <option value="new">New</option>
                                         <option value="read">Read</option>

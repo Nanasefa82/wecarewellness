@@ -5,12 +5,22 @@ import { useAvailability } from '../../hooks/useAvailability';
 import { AvailabilitySlot } from '../../types/booking';
 import { format, addDays, startOfWeek, startOfMonth, endOfMonth, isSameDay, addMonths, subMonths, eachDayOfInterval } from 'date-fns';
 
-// Helper to parse UTC timestamps correctly
+// Helper to parse UTC timestamps as local time (for display purposes)
 const parseUTCDate = (dateString: string): Date => {
-    // The date comes from DB as UTC (e.g., "2025-11-10 09:00:00+00")
-    // Parse it as a proper Date object - the +00 suffix ensures it's treated as UTC
-    const date = new Date(dateString);
-    return date;
+    // The date comes from DB as UTC but represents local time
+    // We need to interpret the UTC time as if it were local time
+    const utcDate = new Date(dateString);
+    
+    // Get the UTC components
+    const year = utcDate.getUTCFullYear();
+    const month = utcDate.getUTCMonth();
+    const date = utcDate.getUTCDate();
+    const hours = utcDate.getUTCHours();
+    const minutes = utcDate.getUTCMinutes();
+    const seconds = utcDate.getUTCSeconds();
+    
+    // Create a new date treating UTC components as local time
+    return new Date(year, month, date, hours, minutes, seconds);
 };
 
 const BookingCalendar: React.FC = () => {
@@ -49,8 +59,8 @@ const BookingCalendar: React.FC = () => {
                     const slots = await Promise.race([queryPromise, timeoutPromise]);
                     console.log('📅 Direct query returned:', slots);
                     setAvailableSlots(slots || []);
-                } catch (timeoutError) {
-                    console.error('⏰ Query timed out, using empty slots');
+                } catch (error) {
+                    console.error('⏰ Query timed out, using empty slots:', error);
                     setAvailableSlots([]);
                 }
             } catch (error) {
@@ -61,7 +71,7 @@ const BookingCalendar: React.FC = () => {
         };
 
         loadAvailableSlots();
-    }, [selectedDate]); // Only depend on selectedDate, not getAvailabilitySlots
+    }, [selectedDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleSlotSelect = (slot: AvailabilitySlot) => {
         // Store slot information in localStorage to pass to booking form page
@@ -114,10 +124,10 @@ const BookingCalendar: React.FC = () => {
     const getSlotsForDate = (date: Date) => {
         return availableSlots.filter(slot => {
             const slotDate = parseUTCDate(slot.start_time);
-            // Compare just the date parts (year, month, day) in UTC
-            return slotDate.getUTCFullYear() === date.getFullYear() &&
-                   slotDate.getUTCMonth() === date.getMonth() &&
-                   slotDate.getUTCDate() === date.getDate();
+            // Compare just the date parts (year, month, day) in local time
+            return slotDate.getFullYear() === date.getFullYear() &&
+                   slotDate.getMonth() === date.getMonth() &&
+                   slotDate.getDate() === date.getDate();
         });
     };
 

@@ -23,6 +23,7 @@ const AvailabilityManager = lazy(() => import('./components/admin/AvailabilityMa
 const AppointmentsDashboard = lazy(() => import('./components/admin/AppointmentsDashboard'))
 const ContactSubmissionsManager = lazy(() => import('./components/admin/ContactSubmissionsManager'))
 const Settings = lazy(() => import('./components/admin/Settings'))
+const UserManagement = lazy(() => import('./components/admin/UserManagement'))
 const BookingCalendar = lazy(() => import('./components/booking/BookingCalendar'))
 const TestDataCreator = lazy(() => import('./components/TestDataCreator'))
 // Import page components
@@ -241,6 +242,20 @@ function App() {
                                     <AdminDashboard>
                                         <Suspense fallback={<RouteLoader />}>
                                             <Settings />
+                                        </Suspense>
+                                    </AdminDashboard>
+                                </ProtectedRoute>
+                            </Suspense>
+                        }
+                    />
+                    <Route
+                        path="/admin/users"
+                        element={
+                            <Suspense fallback={<PageLoader />}>
+                                <ProtectedRoute requireAdmin>
+                                    <AdminDashboard>
+                                        <Suspense fallback={<RouteLoader />}>
+                                            <UserManagement />
                                         </Suspense>
                                     </AdminDashboard>
                                 </ProtectedRoute>
