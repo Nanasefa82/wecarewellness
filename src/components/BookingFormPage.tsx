@@ -476,18 +476,14 @@ const BookingFormPage: React.FC = () => {
                                             <label htmlFor="preferredTime" className="block text-sm font-medium text-secondary-700 mb-2">
                                                 Preferred Time
                                             </label>
-                                            <select
+                                            <input
+                                                type="time"
                                                 id="preferredTime"
                                                 name="preferredTime"
                                                 value={formData.preferredTime}
                                                 onChange={handleInputChange}
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition-colors"
-                                            >
-                                                <option value="">Select Time</option>
-                                                <option value="morning">Morning (8AM - 12PM)</option>
-                                                <option value="afternoon">Afternoon (12PM - 5PM)</option>
-                                                <option value="evening">Evening (5PM - 8PM)</option>
-                                            </select>
+                                            />
                                         </div>
                                     </div>
 
