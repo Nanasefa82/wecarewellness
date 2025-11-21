@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, CheckCircle, MapPin, Users, Heart, Briefcase, Shield } from 'lucide-react';
 import { Header, Footer } from './layout';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { useBookings } from '../hooks/useBookings';
 import { ExtendedBookingFormData } from '../types/booking';
 import { supabase } from '../lib/supabase';
