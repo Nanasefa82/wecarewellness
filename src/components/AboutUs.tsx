@@ -115,24 +115,26 @@ const AboutUs = () => {
                 key={index}
                 className="group bg-sage-50 p-8 rounded-2xl hover:shadow-xl transition-shadow duration-300"
               >
-                <div className="mb-6">
+                <div className="mb-6 flex justify-center">
                   <div className="relative inline-block">
                     <img 
                       src={member.image} 
                       alt={member.name} 
-                      className="w-40 h-40 lg:w-48 lg:h-48 rounded-2xl object-cover shadow-lg"
+                      className="rounded-2xl shadow-lg"
                     />
                     <div className="absolute -bottom-3 -right-3 w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg">
                       {member.icon}
                     </div>
                   </div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-serif text-secondary-800 mb-2 leading-tight">
-                  {member.name}
-                </h3>
-                <p className="text-base md:text-lg text-secondary-600 leading-relaxed font-light">
-                  {member.title}
-                </p>
+                <div className="text-center">
+                  <h3 className="text-2xl md:text-3xl font-serif text-secondary-800 mb-2 leading-tight">
+                    {member.name}
+                  </h3>
+                  <p className="text-base md:text-lg text-secondary-600 leading-relaxed font-light">
+                    {member.title}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
