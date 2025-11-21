@@ -4,6 +4,7 @@ import { Header, Footer } from './layout';
 import { format, parseISO } from 'date-fns';
 import { useBookings } from '../hooks/useBookings';
 import { ExtendedBookingFormData } from '../types/booking';
+import { supabase } from '../lib/supabase';
 
 const BookingFormPage: React.FC = () => {
     const { createBooking, loading, error } = useBookings();
@@ -15,6 +16,16 @@ const BookingFormPage: React.FC = () => {
         appointment_type: string;
         doctor_id: string;
     } | null>(null);
+    
+    const [doctors, setDoctors] = useState<Array<{
+        id: string;
+        user_id: string;
+        name: string;
+        specialization?: string;
+        bio?: string;
+    }>>([]);
+    
+    const [selectedDoctorId, setSelectedDoctorId] = useState<string>('');
     
     const [formData, setFormData] = useState<ExtendedBookingFormData>({
         firstName: '',
@@ -39,6 +50,25 @@ const BookingFormPage: React.FC = () => {
     const [showConsentForm, setShowConsentForm] = useState(false);
     const [consentAccepted, setConsentAccepted] = useState(false);
     const [bookingSuccess, setBookingSuccess] = useState(false);
+
+    // Fetch available doctors
+    useEffect(() => {
+        const fetchDoctors = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('doctor_profiles')
+                    .select('id, user_id, name, specialization, bio')
+                    .order('name');
+                
+                if (error) throw error;
+                setDoctors(data || []);
+            } catch (err) {
+                console.error('Error fetching doctors:', err);
+            }
+        };
+        
+        fetchDoctors();
+    }, []);
 
     // Load selected slot from localStorage on component mount
     useEffect(() => {
@@ -73,6 +103,12 @@ const BookingFormPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
+        // Validate doctor selection
+        if (!selectedDoctorId) {
+            setSubmitMessage('Please select a doctor for your appointment.');
+            return;
+        }
+        
         // Check if consent has been accepted
         if (!consentAccepted) {
             setShowConsentForm(true);
@@ -92,6 +128,7 @@ const BookingFormPage: React.FC = () => {
             // For date fields, ensure they're stored as ISO date strings (YYYY-MM-DD)
             const createData = {
                 availability_slot_id: bookingData.availability_slot_id,
+                doctor_id: selectedDoctorId, // Include selected doctor
                 first_name: bookingData.firstName,
                 last_name: bookingData.lastName,
                 email: bookingData.email,
@@ -393,6 +430,31 @@ const BookingFormPage: React.FC = () => {
                                             required
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition-colors"
                                         />
+                                    </div>
+
+                                    {/* Doctor Selection */}
+                                    <div>
+                                        <label htmlFor="doctorSelection" className="block text-sm font-medium text-secondary-700 mb-2">
+                                            Select Doctor *
+                                        </label>
+                                        <select
+                                            id="doctorSelection"
+                                            value={selectedDoctorId}
+                                            onChange={(e) => setSelectedDoctorId(e.target.value)}
+                                            required
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500 transition-colors"
+                                        >
+                                            <option value="">-- Select a doctor --</option>
+                                            {doctors.map((doctor) => (
+                                                <option key={doctor.id} value={doctor.user_id}>
+                                                    {doctor.name}
+                                                    {doctor.specialization && ` - ${doctor.specialization}`}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {doctors.length === 0 && (
+                                            <p className="text-sm text-gray-500 mt-1">Loading doctors...</p>
+                                        )}
                                     </div>
 
                                     {/* Appointment Preferences */}

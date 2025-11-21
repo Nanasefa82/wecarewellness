@@ -251,6 +251,7 @@ export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
 // API interfaces for CRUD operations
 export interface CreateBookingData {
     availability_slot_id?: string;
+    doctor_id?: string;
     first_name: string;
     last_name: string;
     email: string;
