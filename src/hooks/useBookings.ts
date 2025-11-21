@@ -63,7 +63,7 @@ export const useBookings = () => {
                     doctorEmail: 'doctor@wecarewellnessllc.com', // This should come from the doctor profile
                     appointmentType: data.availability_slot?.appointment_type || 'consultation',
                     sessionType: 'virtual', // Default to virtual, could be determined from appointment type
-                    timezone: 'PST',
+                    timezone: 'EST',
                     cancelUrl: `${window.location.origin}/cancel-appointment/${data.id}`
                 };
                 

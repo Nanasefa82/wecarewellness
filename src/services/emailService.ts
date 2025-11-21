@@ -63,24 +63,25 @@ class EmailService {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            timeZone: 'America/New_York'
         });
     }
 
-    private formatTime(timeString: string, timezone: string = 'PST'): string {
+    private formatTime(timeString: string, timezone: string = 'EST'): string {
         // Convert time string to 12-hour format
         const [hours, minutes] = timeString.split(':');
         const hour = parseInt(hours);
         const ampm = hour >= 12 ? 'PM' : 'AM';
         const displayHour = hour % 12 || 12;
-        return `${displayHour}:${minutes} ${ampm} (${timezone})`;
+        return `${displayHour}:${minutes} ${ampm} ${timezone}`;
     }
 
     private generatePatientConfirmationEmail(data: BookingEmailData): EmailData {
         const { booking, doctorName, doctorCredentials, sessionType, timezone, cancelUrl } = data;
         
         const appointmentDate = this.formatDate(booking.preferred_date);
-        const appointmentTime = this.formatTime(booking.preferred_time, timezone || 'PST');
+        const appointmentTime = this.formatTime(booking.preferred_time, timezone || 'EST');
         const fullDoctorName = doctorName || 'Dr. Emma Boateng';
         const credentials = doctorCredentials || 'DNP, MSN, PMHNP-BC';
         const sessionTypeText = sessionType === 'virtual' ? 'Virtual Session' : 'In-Person';
@@ -204,7 +205,7 @@ The We Care Wellness Team
         const { booking, doctorEmail, sessionType, timezone } = data;
         
         const appointmentDate = this.formatDate(booking.preferred_date);
-        const appointmentTime = this.formatTime(booking.preferred_time, timezone || 'PST');
+        const appointmentTime = this.formatTime(booking.preferred_time, timezone || 'EST');
         const sessionTypeText = sessionType === 'virtual' ? 'Virtual Session' : 'In-Person';
 
         const subject = `New Appointment Booking - ${booking.first_name} ${booking.last_name} - ${appointmentDate}`;

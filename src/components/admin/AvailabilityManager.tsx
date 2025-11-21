@@ -6,6 +6,7 @@ import { AvailabilitySlot, CreateAvailabilitySlotData } from '../../types/bookin
 import { format, addDays, startOfWeek, startOfMonth, endOfMonth, isSameDay, addMonths, subMonths, eachDayOfInterval } from 'date-fns';
 import ConfirmDialog from '../ui/ConfirmDialog';
 import LoadingSkeleton from '../ui/LoadingSkeleton';
+import { utcToEst, formatInEst } from '../../utils/timezone';
 
 const AvailabilityManager: React.FC = React.memo(() => {
     const startTime = performance.now();
@@ -29,6 +30,11 @@ const AvailabilityManager: React.FC = React.memo(() => {
         slotId: string | null;
         slotInfo: string;
     }>({ isOpen: false, slotId: null, slotInfo: '' });
+    const [successDialog, setSuccessDialog] = useState<{
+        isOpen: boolean;
+        message: string;
+        type: 'success' | 'danger';
+    }>({ isOpen: false, message: '', type: 'success' });
     const [localLoading, setLocalLoading] = useState(false);
 
     // Helper functions for calendar
@@ -57,11 +63,12 @@ const AvailabilityManager: React.FC = React.memo(() => {
         console.log('🔍 getSlotsForDate called for:', date.toDateString(), 'Total slots:', slots.length);
 
         const daySlots = slots.filter(slot => {
-            const slotDate = new Date(slot.start_time);
+            // Convert UTC timestamp to EST for comparison
+            const slotDate = utcToEst(slot.start_time);
             const isSame = isSameDay(slotDate, date);
             console.log('🗓️ Checking slot:', {
                 slotStartTime: slot.start_time,
-                slotDate: slotDate.toDateString(),
+                slotDateEST: slotDate.toDateString(),
                 targetDate: date.toDateString(),
                 isSameDay: isSame
             });
@@ -178,28 +185,41 @@ const AvailabilityManager: React.FC = React.memo(() => {
         try {
             await createAvailabilitySlot(slotData);
             setShowCreateForm(false);
+            
+            // Show success message
+            const slotTime = formatInEst(slotData.start_time, 'EEEE, MMMM d, yyyy \'at\' h:mm a');
+            setSuccessDialog({
+                isOpen: true,
+                message: `Availability slot created successfully for ${slotTime} EST`,
+                type: 'success'
+            });
+            
             reloadSlots();
         } catch (error) {
             console.error('Error creating slot:', error);
+            
+            // Parse error message for better user feedback
+            let errorMessage = 'Please try again.';
+            if (error && typeof error === 'object' && 'message' in error) {
+                const msg = (error as { message: string }).message;
+                
+                if (msg.includes('overlaps with existing slot')) {
+                    errorMessage = 'This time slot overlaps with an existing availability slot. Please choose a different time.';
+                } else {
+                    errorMessage = msg;
+                }
+            }
+            
+            setSuccessDialog({
+                isOpen: true,
+                message: `Failed to create availability slot: ${errorMessage}`,
+                type: 'danger'
+            });
         }
     };
 
-    // Helper to parse UTC timestamps as local time (same as BookingCalendar)
-    const parseUTCDate = (dateString: string): Date => {
-        const utcDate = new Date(dateString);
-        const year = utcDate.getUTCFullYear();
-        const month = utcDate.getUTCMonth();
-        const date = utcDate.getUTCDate();
-        const hours = utcDate.getUTCHours();
-        const minutes = utcDate.getUTCMinutes();
-        const seconds = utcDate.getUTCSeconds();
-        return new Date(year, month, date, hours, minutes, seconds);
-    };
-
     const handleDeleteSlot = (slotId: string, startTime: string, endTime: string) => {
-        const startDate = parseUTCDate(startTime);
-        const endDate = parseUTCDate(endTime);
-        const slotInfo = `${startDate.toLocaleDateString()} from ${startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} to ${endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        const slotInfo = `${formatInEst(startTime, 'MM/dd/yyyy')} from ${formatInEst(startTime, 'h:mm a')} to ${formatInEst(endTime, 'h:mm a')} EST`;
 
         setDeleteConfirm({
             isOpen: true,
@@ -254,14 +274,40 @@ const AvailabilityManager: React.FC = React.memo(() => {
             };
 
             console.log('🚀 Calling createRecurringAvailability with:', apiData);
-            await createRecurringAvailability(apiData);
+            const result = await createRecurringAvailability(apiData);
 
             console.log('✅ Recurring availability created successfully');
             setShowRecurringForm(false);
+            
+            // Show success message
+            const slotsCreated = result || 'Multiple';
+            setSuccessDialog({
+                isOpen: true,
+                message: `Successfully created ${slotsCreated} recurring availability slots!`,
+                type: 'success'
+            });
+            
             reloadSlots();
         } catch (error) {
             console.error('❌ Error creating recurring availability:', error);
-            alert(`Failed to create recurring schedule: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            
+            // Parse error message for better user feedback
+            let errorMessage = 'Unknown error occurred';
+            if (error && typeof error === 'object' && 'message' in error) {
+                const msg = (error as { message: string }).message;
+                
+                if (msg.includes('overlaps with existing slot')) {
+                    errorMessage = 'Some time slots overlap with existing availability. Please check your calendar and remove conflicting slots before creating recurring availability, or choose different times.';
+                } else {
+                    errorMessage = msg;
+                }
+            }
+            
+            setSuccessDialog({
+                isOpen: true,
+                message: `Failed to create recurring schedule: ${errorMessage}`,
+                type: 'danger'
+            });
         }
     };
 
@@ -376,7 +422,7 @@ const AvailabilityManager: React.FC = React.memo(() => {
                                                                         className="flex items-center justify-between p-1.5 text-xs bg-gray-700 border border-green-800 rounded group hover:bg-green-900 hover:border-green-600 transition-all cursor-pointer"
                                                                     >
                                                                         <span className="text-green-300 font-medium flex-1">
-                                                                            {new Date(slot.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                            {formatInEst(slot.start_time, 'h:mm a')}
                                                                         </span>
                                                                         <button
                                                                             onClick={(e) => {
@@ -440,6 +486,17 @@ const AvailabilityManager: React.FC = React.memo(() => {
                 cancelText="Cancel"
                 type="danger"
             />
+
+            {/* Success/Error Dialog */}
+            <ConfirmDialog
+                isOpen={successDialog.isOpen}
+                onClose={() => setSuccessDialog({ isOpen: false, message: '', type: 'success' })}
+                onConfirm={() => setSuccessDialog({ isOpen: false, message: '', type: 'success' })}
+                title={successDialog.type === 'success' ? 'Success' : 'Error'}
+                message={successDialog.message}
+                confirmText="OK"
+                type={successDialog.type}
+            />
         </div>
     );
 });
@@ -468,13 +525,14 @@ const CreateSlotModal: React.FC<CreateSlotModalProps> = ({ onClose, onSubmit, do
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Create dates in local time but store as UTC to match our display logic
-        // This ensures that when a user selects 11:00 AM, it shows as 11:00 AM in the calendar
+        // Parse the date and time as EST, then store as UTC
+        // This ensures 9:00 AM EST input is stored correctly and displays as 9:00 AM EST
         const [year, month, day] = formData.date.split('-').map(Number);
         const [startHour, startMinute] = formData.startTime.split(':').map(Number);
         const [endHour, endMinute] = formData.endTime.split(':').map(Number);
 
-        // Create UTC dates that represent the local time
+        // Create dates treating the input as EST local time
+        // The UTC components will be interpreted as local EST time by our display logic
         const startDateTime = new Date(Date.UTC(year, month - 1, day, startHour, startMinute));
         const endDateTime = new Date(Date.UTC(year, month - 1, day, endHour, endMinute));
 

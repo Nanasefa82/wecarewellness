@@ -5,23 +5,12 @@ import { useAvailability } from '../../hooks/useAvailability';
 import { AvailabilitySlot } from '../../types/booking';
 import { format, addDays, startOfWeek, startOfMonth, endOfMonth, isSameDay, addMonths, subMonths, eachDayOfInterval } from 'date-fns';
 import { Header, Footer } from '../layout';
+import { utcToEst } from '../../utils/timezone';
 
-// Helper to parse UTC timestamps as local time (for display purposes)
+// Helper to parse UTC timestamps as EST time
 const parseUTCDate = (dateString: string): Date => {
-    // The date comes from DB as UTC but represents local time
-    // We need to interpret the UTC time as if it were local time
-    const utcDate = new Date(dateString);
-    
-    // Get the UTC components
-    const year = utcDate.getUTCFullYear();
-    const month = utcDate.getUTCMonth();
-    const date = utcDate.getUTCDate();
-    const hours = utcDate.getUTCHours();
-    const minutes = utcDate.getUTCMinutes();
-    const seconds = utcDate.getUTCSeconds();
-    
-    // Create a new date treating UTC components as local time
-    return new Date(year, month, date, hours, minutes, seconds);
+    // Convert UTC timestamp from database to EST
+    return utcToEst(dateString);
 };
 
 const BookingCalendar: React.FC = () => {
