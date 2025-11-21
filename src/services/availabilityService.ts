@@ -22,14 +22,6 @@ export class AvailabilityService {
         });
 
         try {
-            // Use direct table query with timeout to handle hanging queries
-            console.log('🎯 Using direct table query with timeout protection');
-
-            // Create a timeout promise
-            const timeoutPromise = new Promise<never>((_, reject) => {
-                setTimeout(() => reject(new Error('Query timeout after 3 seconds')), 3000);
-            });
-
             // Build query - only filter by doctor_id if provided
             let query = supabase
                 .from('availability_slots')
@@ -42,20 +34,10 @@ export class AvailabilityService {
 
             // Only filter by doctor if doctorId is provided and not empty
             if (doctorId && doctorId.trim() !== '') {
-                console.log('🔍 Filtering by doctor_id:', doctorId);
                 query = query.eq('doctor_id', doctorId);
-            } else {
-                console.log('🔍 Loading all available slots (no doctor filter)');
             }
 
-            const queryPromise = query;
-
-            console.log('🔍 Querying availability_slots table with timeout...');
-
-            // Race between query and timeout
-            const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
-
-            console.log('✅ Supabase query completed');
+            const { data, error } = await query;
 
             if (error) {
                 console.error('❌ Database query error:', error);
