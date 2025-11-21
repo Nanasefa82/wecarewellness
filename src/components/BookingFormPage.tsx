@@ -5,6 +5,7 @@ import { format, parseISO } from 'date-fns';
 import { useBookings } from '../hooks/useBookings';
 import { ExtendedBookingFormData } from '../types/booking';
 import { supabase } from '../lib/supabase';
+import { utcToEst, formatInEst } from '../utils/timezone';
 
 const BookingFormPage: React.FC = () => {
     const { createBooking, loading, error } = useBookings();
@@ -78,8 +79,8 @@ const BookingFormPage: React.FC = () => {
                 const slot = JSON.parse(storedSlot);
                 setSelectedSlot(slot);
                 
-                // Pre-populate form with slot information
-                const slotDate = parseISO(slot.start_time);
+                // Pre-populate form with slot information in EST
+                const slotDate = utcToEst(slot.start_time);
                 setFormData(prev => ({
                     ...prev,
                     availability_slot_id: slot.id,
@@ -327,13 +328,13 @@ const BookingFormPage: React.FC = () => {
                                             <div className="flex items-center text-secondary-700">
                                                 <Calendar className="w-4 h-4 text-sage-600 mr-2" />
                                                 <span className="font-medium">
-                                                    {format(parseISO(selectedSlot.start_time), 'EEEE, MMMM d, yyyy')}
+                                                    {formatInEst(selectedSlot.start_time, 'EEEE, MMMM d, yyyy')}
                                                 </span>
                                             </div>
                                             <div className="flex items-center text-secondary-700">
                                                 <Clock className="w-4 h-4 text-sage-600 mr-2" />
                                                 <span>
-                                                    {format(parseISO(selectedSlot.start_time), 'h:mm a')} - {format(parseISO(selectedSlot.end_time), 'h:mm a')}
+                                                    {formatInEst(selectedSlot.start_time, 'h:mm a')} - {formatInEst(selectedSlot.end_time, 'h:mm a')} EST
                                                 </span>
                                             </div>
                                             <div className="text-sm text-secondary-600 capitalize">
