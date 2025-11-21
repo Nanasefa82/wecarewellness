@@ -8,7 +8,6 @@ import {
     User, 
     Search,
     Filter,
-    MoreVertical,
     Check,
     X,
     AlertCircle
@@ -35,6 +34,8 @@ const UserManagement: React.FC = () => {
     const [selectedUser, setSelectedUser] = useState<ExtendedProfile | null>(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showCreateDoctorModal, setShowCreateDoctorModal] = useState(false);
+    const [showCreateUserModal, setShowCreateUserModal] = useState(false);
+    const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
@@ -180,13 +181,22 @@ const UserManagement: React.FC = () => {
                     <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
                     <p className="text-gray-600 mt-1">Manage user accounts and assign roles</p>
                 </div>
-                <button
-                    onClick={() => setShowCreateDoctorModal(true)}
-                    className="flex items-center space-x-2 bg-sage-600 text-white px-4 py-2 rounded-lg hover:bg-sage-700 transition-colors"
-                >
-                    <UserPlus className="w-4 h-4" />
-                    <span>Create Doctor Profile</span>
-                </button>
+                <div className="flex space-x-3">
+                    <button
+                        onClick={() => setShowCreateUserModal(true)}
+                        className="flex items-center space-x-2 bg-sage-600 text-white px-4 py-2 rounded-lg hover:bg-sage-700 transition-colors"
+                    >
+                        <UserPlus className="w-4 h-4" />
+                        <span>Create User</span>
+                    </button>
+                    <button
+                        onClick={() => setShowCreateDoctorModal(true)}
+                        className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                        <UserPlus className="w-4 h-4" />
+                        <span>Create Doctor Profile</span>
+                    </button>
+                </div>
             </div>
 
             {/* Success/Error Messages */}
@@ -312,6 +322,36 @@ const UserManagement: React.FC = () => {
                 />
             )}
 
+            {/* Create User Modal */}
+            {showCreateUserModal && (
+                <CreateUserModal
+                    onClose={() => setShowCreateUserModal(false)}
+                    onSave={async () => {
+                        await loadUsers();
+                        setShowCreateUserModal(false);
+                        setSuccess('User created successfully!');
+                        setTimeout(() => setSuccess(null), 3000);
+                    }}
+                />
+            )}
+
+            {/* Reset Password Modal */}
+            {showResetPasswordModal && selectedUser && (
+                <ResetPasswordModal
+                    user={selectedUser}
+                    onClose={() => {
+                        setShowResetPasswordModal(false);
+                        setSelectedUser(null);
+                    }}
+                    onSuccess={() => {
+                        setShowResetPasswordModal(false);
+                        setSelectedUser(null);
+                        setSuccess('Password reset email sent!');
+                        setTimeout(() => setSuccess(null), 3000);
+                    }}
+                />
+            )}
+
             {/* Create Doctor Profile Modal */}
             {showCreateDoctorModal && (
                 <CreateDoctorModal
@@ -337,8 +377,6 @@ interface UserRowProps {
 }
 
 const UserRow: React.FC<UserRowProps> = ({ user, onUpdateRole, onToggleStatus, onEdit }) => {
-    const [showActions, setShowActions] = useState(false);
-
     return (
         <tr className="hover:bg-gray-50">
             <td className="px-6 py-4 whitespace-nowrap">
@@ -384,93 +422,69 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUpdateRole, onToggleStatus, o
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {new Date(user.created_at).toLocaleDateString()}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className="relative">
+            <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center space-x-2">
+                    {/* Edit Button */}
                     <button
-                        onClick={() => setShowActions(!showActions)}
-                        className="text-gray-400 hover:text-gray-600 p-1 rounded"
-                        title="User actions menu"
+                        onClick={onEdit}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit user"
                     >
-                        <MoreVertical className="w-4 h-4" />
+                        <Edit3 className="w-4 h-4" />
                     </button>
                     
-                    {showActions && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-                            <div className="py-1">
-                                <button
-                                    onClick={() => {
-                                        onEdit();
-                                        setShowActions(false);
-                                    }}
-                                    className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                                >
-                                    <Edit3 className="w-4 h-4" />
-                                    <span>Edit User</span>
-                                </button>
-                                
-                                <div className="border-t border-gray-100 my-1"></div>
-                                
-                                <button
-                                    onClick={() => {
-                                        onUpdateRole(user.id, 'client');
-                                        setShowActions(false);
-                                    }}
-                                    className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                                >
-                                    <User className="w-4 h-4" />
-                                    <span>Make Client</span>
-                                </button>
-                                
-                                <button
-                                    onClick={() => {
-                                        onUpdateRole(user.id, 'doctor');
-                                        setShowActions(false);
-                                    }}
-                                    className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                                >
-                                    <Stethoscope className="w-4 h-4" />
-                                    <span>Make Doctor</span>
-                                </button>
-                                
-                                <button
-                                    onClick={() => {
-                                        onUpdateRole(user.id, 'admin');
-                                        setShowActions(false);
-                                    }}
-                                    className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                                >
-                                    <ShieldCheck className="w-4 h-4" />
-                                    <span>Make Admin</span>
-                                </button>
-                                
-                                <div className="border-t border-gray-100 my-1"></div>
-                                
-                                <button
-                                    onClick={() => {
-                                        onToggleStatus(user.id, user.is_active);
-                                        setShowActions(false);
-                                    }}
-                                    className={`flex items-center space-x-2 px-4 py-2 text-sm w-full text-left ${
-                                        user.is_active 
-                                            ? 'text-red-700 hover:bg-red-50' 
-                                            : 'text-green-700 hover:bg-green-50'
-                                    }`}
-                                >
-                                    {user.is_active ? (
-                                        <>
-                                            <X className="w-4 h-4" />
-                                            <span>Deactivate</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Check className="w-4 h-4" />
-                                            <span>Activate</span>
-                                        </>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                    {/* Role Buttons */}
+                    <button
+                        onClick={() => onUpdateRole(user.id, 'client')}
+                        className={`p-2 rounded-lg transition-colors ${
+                            user.role === 'client' 
+                                ? 'bg-gray-100 text-gray-700' 
+                                : 'text-gray-400 hover:bg-gray-50'
+                        }`}
+                        title="Make client"
+                    >
+                        <User className="w-4 h-4" />
+                    </button>
+                    
+                    <button
+                        onClick={() => onUpdateRole(user.id, 'doctor')}
+                        className={`p-2 rounded-lg transition-colors ${
+                            user.role === 'doctor' 
+                                ? 'bg-blue-100 text-blue-700' 
+                                : 'text-gray-400 hover:bg-blue-50'
+                        }`}
+                        title="Make doctor"
+                    >
+                        <Stethoscope className="w-4 h-4" />
+                    </button>
+                    
+                    <button
+                        onClick={() => onUpdateRole(user.id, 'admin')}
+                        className={`p-2 rounded-lg transition-colors ${
+                            user.role === 'admin' 
+                                ? 'bg-red-100 text-red-700' 
+                                : 'text-gray-400 hover:bg-red-50'
+                        }`}
+                        title="Make admin"
+                    >
+                        <ShieldCheck className="w-4 h-4" />
+                    </button>
+                    
+                    {/* Divider */}
+                    <div className="h-6 w-px bg-gray-300"></div>
+                    
+                    {/* Toggle Status Button */}
+                    <button
+                        onClick={() => onToggleStatus(user.id, user.is_active)}
+                        className={`p-2 rounded-lg transition-colors ${
+                            user.is_active 
+                                ? 'text-red-600 hover:bg-red-50' 
+                                : 'text-green-600 hover:bg-green-50'
+                        }`}
+                        title={user.is_active ? 'Deactivate user' : 'Activate user'}
+                    >
+                        {user.is_active ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+                    </button>
                 </div>
             </td>
         </tr>
@@ -932,6 +946,263 @@ const CreateDoctorModal: React.FC<CreateDoctorModalProps> = ({ onClose, onSave }
                         </div>
                     </form>
                 )}
+            </div>
+        </div>
+    );
+};
+
+// Create User Modal Component
+interface CreateUserModalProps {
+    onClose: () => void;
+    onSave: () => void;
+}
+
+const CreateUserModal: React.FC<CreateUserModalProps> = ({ onClose, onSave }) => {
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+        full_name: '',
+        phone: '',
+        role: 'client' as 'client' | 'doctor' | 'admin'
+    });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        try {
+            // Use regular signup (requires email confirmation unless disabled in Supabase settings)
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: formData.email,
+                password: formData.password,
+                options: {
+                    data: {
+                        full_name: formData.full_name
+                    }
+                }
+            });
+
+            if (authError) throw authError;
+            
+            if (!authData.user) {
+                throw new Error('User creation failed - no user data returned');
+            }
+
+            // Update the profile with additional info and role
+            // (Profile should be auto-created by trigger, but we'll update it)
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .upsert({
+                    id: authData.user.id,
+                    email: formData.email,
+                    full_name: formData.full_name,
+                    phone: formData.phone,
+                    role: formData.role,
+                    is_active: true,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                });
+
+            if (profileError) throw profileError;
+
+            onSave();
+        } catch (err) {
+            console.error('Error creating user:', err);
+            setError(err instanceof Error ? err.message : 'Failed to create user');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+                <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-medium text-gray-900">Create New User</h3>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {error && (
+                    <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
+                        <div className="flex items-center space-x-2">
+                            <AlertCircle className="w-4 h-4 text-red-600" />
+                            <p className="text-red-700 text-sm">{error}</p>
+                        </div>
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Email *
+                        </label>
+                        <input
+                            type="email"
+                            required
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500"
+                            placeholder="user@example.com"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Password *
+                        </label>
+                        <input
+                            type="password"
+                            required
+                            minLength={6}
+                            value={formData.password}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500"
+                            placeholder="Minimum 6 characters"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Full Name
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.full_name}
+                            onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500"
+                            placeholder="John Doe"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Phone
+                        </label>
+                        <input
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500"
+                            placeholder="(555) 123-4567"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Role *
+                        </label>
+                        <select
+                            value={formData.role}
+                            onChange={(e) => setFormData({ ...formData, role: e.target.value as 'client' | 'doctor' | 'admin' })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage-500 focus:border-sage-500"
+                        >
+                            <option value="client">Client</option>
+                            <option value="doctor">Doctor</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <div className="flex space-x-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                            disabled={loading}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="flex-1 px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors disabled:bg-sage-400"
+                            disabled={loading}
+                        >
+                            {loading ? 'Creating...' : 'Create User'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+// Reset Password Modal Component
+interface ResetPasswordModalProps {
+    user: ExtendedProfile;
+    onClose: () => void;
+    onSuccess: () => void;
+}
+
+const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ user, onClose, onSuccess }) => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleResetPassword = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const { error: resetError } = await supabase.auth.resetPasswordForEmail(user.email, {
+                redirectTo: `${window.location.origin}/reset-password`
+            });
+
+            if (resetError) throw resetError;
+
+            onSuccess();
+        } catch (err) {
+            console.error('Error sending password reset:', err);
+            setError(err instanceof Error ? err.message : 'Failed to send password reset email');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-medium text-gray-900">Reset Password</h3>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {error && (
+                    <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
+                        <div className="flex items-center space-x-2">
+                            <AlertCircle className="w-4 h-4 text-red-600" />
+                            <p className="text-red-700 text-sm">{error}</p>
+                        </div>
+                    </div>
+                )}
+
+                <div className="mb-6">
+                    <p className="text-gray-600">
+                        Send a password reset email to:
+                    </p>
+                    <p className="font-medium text-gray-900 mt-2">{user.email}</p>
+                </div>
+
+                <div className="flex space-x-3">
+                    <button
+                        onClick={onClose}
+                        className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                        disabled={loading}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleResetPassword}
+                        className="flex-1 px-4 py-2 bg-sage-600 text-white rounded-lg hover:bg-sage-700 transition-colors disabled:bg-sage-400"
+                        disabled={loading}
+                    >
+                        {loading ? 'Sending...' : 'Send Reset Email'}
+                    </button>
+                </div>
             </div>
         </div>
     );

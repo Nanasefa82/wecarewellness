@@ -293,7 +293,17 @@ export const useAuth = () => {
                 if (!isConnected) {
                     console.error('❌ Supabase connection failed, using fallback auth');
                     // For known admin, set minimal auth state
-                    const { data: { session } } = await supabase.auth.getSession();
+                    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                    
+                    // Clear invalid tokens
+                    if (sessionError?.message?.includes('Invalid Refresh Token')) {
+                        console.log('🗑️ Clearing invalid session');
+                        await supabase.auth.signOut();
+                        localStorage.clear();
+                        setAuthState(prev => ({ ...prev, loading: false }));
+                        return;
+                    }
+                    
                     if (session?.user?.email === 'nanasefa@gmail.com') {
                         console.log('🎯 Setting fallback auth for admin user');
                         setAuthState({
@@ -318,7 +328,21 @@ export const useAuth = () => {
                 }
 
                 // Normal auth flow if connection is good
-                const { data: { session } } = await supabase.auth.getSession();
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                
+                // Handle invalid refresh token
+                if (sessionError) {
+                    console.error('❌ Session error:', sessionError);
+                    if (sessionError.message?.includes('Invalid Refresh Token') || 
+                        sessionError.message?.includes('Refresh Token Not Found')) {
+                        console.log('🗑️ Clearing invalid session from storage');
+                        await supabase.auth.signOut();
+                        localStorage.clear();
+                    }
+                    setAuthState(prev => ({ ...prev, loading: false }));
+                    return;
+                }
+                
                 await updateAuthState(session);
             } catch (error) {
                 console.error('❌ Error in auth initialization:', error);

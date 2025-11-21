@@ -30,15 +30,25 @@ export class AvailabilityService {
                 setTimeout(() => reject(new Error('Query timeout after 3 seconds')), 3000);
             });
 
-            // Create the query promise
-            const queryPromise = supabase
+            // Build query - only filter by doctor_id if provided
+            let query = supabase
                 .from('availability_slots')
                 .select('*')
-                .eq('doctor_id', doctorId)
+                .eq('is_available', true)
                 .gte('start_time', startDate + 'T00:00:00')
                 .lte('start_time', endDate + 'T23:59:59')
                 .order('start_time', { ascending: true })
                 .limit(200);
+
+            // Only filter by doctor if doctorId is provided and not empty
+            if (doctorId && doctorId.trim() !== '') {
+                console.log('🔍 Filtering by doctor_id:', doctorId);
+                query = query.eq('doctor_id', doctorId);
+            } else {
+                console.log('🔍 Loading all available slots (no doctor filter)');
+            }
+
+            const queryPromise = query;
 
             console.log('🔍 Querying availability_slots table with timeout...');
 

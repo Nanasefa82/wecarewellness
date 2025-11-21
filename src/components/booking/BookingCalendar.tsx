@@ -4,6 +4,7 @@ import { Calendar, Clock, CheckCircle } from 'lucide-react';
 import { useAvailability } from '../../hooks/useAvailability';
 import { AvailabilitySlot } from '../../types/booking';
 import { format, addDays, startOfWeek, startOfMonth, endOfMonth, isSameDay, addMonths, subMonths, eachDayOfInterval } from 'date-fns';
+import { Header, Footer } from '../layout';
 
 // Helper to parse UTC timestamps as local time (for display purposes)
 const parseUTCDate = (dateString: string): Date => {
@@ -46,25 +47,24 @@ const BookingCalendar: React.FC = () => {
                 const endDate = format(calendarEnd, 'yyyy-MM-dd');
                 console.log('📅 BookingCalendar: Loading slots for month range:', { startDate, endDate });
 
-                // Use direct query method with timeout
-                console.log('🔍 Using direct query method with 5s timeout...');
+                // Load slots directly without timeout fallback
+                console.log('🔍 Loading available slots...');
                 
-                const timeoutPromise = new Promise<never>((_, reject) =>
-                    setTimeout(() => reject(new Error('Query timeout')), 5000)
-                );
+                const slots = await getAvailabilitySlots(undefined, startDate, endDate);
+                console.log('📅 Query returned:', slots?.length || 0, 'slots');
                 
-                const queryPromise = getAvailabilitySlots(undefined, startDate, endDate);
+                // Filter out overdue appointments (past date/time)
+                const now = new Date();
+                const futureSlots = (slots || []).filter(slot => {
+                    const slotDateTime = new Date(slot.start_time);
+                    return slotDateTime > now;
+                });
                 
-                try {
-                    const slots = await Promise.race([queryPromise, timeoutPromise]);
-                    console.log('📅 Direct query returned:', slots);
-                    setAvailableSlots(slots || []);
-                } catch (error) {
-                    console.error('⏰ Query timed out, using empty slots:', error);
-                    setAvailableSlots([]);
-                }
+                console.log('✅ Filtered to', futureSlots.length, 'future slots (removed', (slots?.length || 0) - futureSlots.length, 'overdue)');
+                setAvailableSlots(futureSlots);
             } catch (error) {
                 console.error('❌ BookingCalendar: Error loading available slots:', error);
+                setAvailableSlots([]);
             } finally {
                 setLoading(false);
             }
@@ -133,7 +133,9 @@ const BookingCalendar: React.FC = () => {
 
     if (bookingSuccess) {
         return (
-            <div className="max-w-2xl mx-auto p-6 text-center">
+            <>
+                <Header />
+                <div className="max-w-2xl mx-auto p-6 text-center">
                 <div className="bg-white rounded-lg border border-gray-200 p-8">
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CheckCircle className="w-8 h-8 text-green-600" />
@@ -152,10 +154,14 @@ const BookingCalendar: React.FC = () => {
                     </button>
                 </div>
             </div>
+            <Footer />
+            </>
         );
     }
 
     return (
+        <>
+        <Header />
         <div className="w-full px-2 sm:px-4 md:px-6 lg:px-8 py-4 md:py-6">
             <div className="w-full max-w-full md:max-w-[95%] lg:max-w-[85%] mx-auto">
             {/* Header */}
@@ -344,6 +350,8 @@ const BookingCalendar: React.FC = () => {
 
             </div>
         </div>
+        <Footer />
+        </>
     );
 };
 
