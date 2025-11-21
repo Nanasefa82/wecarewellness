@@ -99,17 +99,11 @@ export const useAuth = () => {
                 try {
                     console.log(`🔄 Attempt ${attempt}/${maxRetries} to fetch profile`);
                     
-                    const timeoutPromise = new Promise<never>((_, reject) =>
-                        setTimeout(() => reject(new Error('Profile fetch timeout')), 5000) // Increased to 5 seconds
-                    );
-
-                    const queryPromise = supabase
+                    const { data, error } = await supabase
                         .from('profiles')
                         .select('*')
                         .eq('id', userId)
                         .single();
-
-                    const { data, error } = await Promise.race([queryPromise, timeoutPromise]);
 
                     if (error) {
                         lastError = error;
