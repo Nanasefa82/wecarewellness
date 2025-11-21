@@ -4,7 +4,7 @@
  */
 
 import { format as dateFnsFormat } from 'date-fns';
-import { utcToZonedTime, zonedTimeToUtc, format as formatTz } from 'date-fns-tz';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 // Eastern Time Zone
 export const TIMEZONE = 'America/New_York';
