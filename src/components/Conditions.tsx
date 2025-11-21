@@ -24,7 +24,7 @@ const Conditions = () => {
         },
         {
             name: 'Schizophrenia',
-            image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            image: '/images/conditions/schizophrenia.jpg',
             description: 'Comprehensive care for complex mental health conditions'
         },
         {
@@ -34,12 +34,12 @@ const Conditions = () => {
         },
         {
             name: 'OCD',
-            image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            image: '/images/conditions/ocd.jpg',
             description: 'Breaking cycles of obsessive-compulsive behaviors'
         },
         {
             name: 'Autism Spectrum',
-            image: 'https://images.unsplash.com/photo-1516302752625-fcc3c50ae61f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+            image: '/images/conditions/autismspectra.jpg',
             description: 'Supporting neurodivergent individuals and families'
         },
         {
