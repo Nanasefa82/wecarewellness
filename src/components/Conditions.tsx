@@ -19,7 +19,7 @@ const Conditions = () => {
         },
         {
             name: 'ADHD',
-            image: 'public/images/conditions/adhd.jpg',
+            image: '/images/conditions/adhd.jpg',
             description: 'Improving focus and attention through behavioral strategies'
         },
         {
@@ -54,7 +54,7 @@ const Conditions = () => {
         },
         {
             name: 'Stress Management',
-            image: 'public/images/conditions/stress.jpg',
+            image: '/images/conditions/stress.jpg',
             description: 'Building resilience and healthy coping mechanisms'
         },
         {
@@ -69,7 +69,7 @@ const Conditions = () => {
         },
         {
             name: 'Relationship & Family Issues',
-            image: 'public/images/conditions/family.jpg',
+            image: '/images/conditions/family.jpg',
             description: 'Strengthening relationships and family dynamics'
         }
     ];

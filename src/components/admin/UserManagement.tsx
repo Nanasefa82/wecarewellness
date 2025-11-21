@@ -10,7 +10,8 @@ import {
     Filter,
     Check,
     X,
-    AlertCircle
+    AlertCircle,
+    Key
 } from 'lucide-react';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
@@ -296,6 +297,10 @@ const UserManagement: React.FC = () => {
                                             setSelectedUser(user);
                                             setShowEditModal(true);
                                         }}
+                                        onResetPassword={() => {
+                                            setSelectedUser(user);
+                                            setShowResetPasswordModal(true);
+                                        }}
                                     />
                                 ))}
                             </tbody>
@@ -374,9 +379,10 @@ interface UserRowProps {
     onUpdateRole: (userId: string, role: 'client' | 'doctor' | 'admin') => void;
     onToggleStatus: (userId: string, currentStatus: boolean) => void;
     onEdit: () => void;
+    onResetPassword: () => void;
 }
 
-const UserRow: React.FC<UserRowProps> = ({ user, onUpdateRole, onToggleStatus, onEdit }) => {
+const UserRow: React.FC<UserRowProps> = ({ user, onUpdateRole, onToggleStatus, onEdit, onResetPassword }) => {
     return (
         <tr className="hover:bg-gray-50">
             <td className="px-6 py-4 whitespace-nowrap">
@@ -431,6 +437,15 @@ const UserRow: React.FC<UserRowProps> = ({ user, onUpdateRole, onToggleStatus, o
                         title="Edit user"
                     >
                         <Edit3 className="w-4 h-4" />
+                    </button>
+                    
+                    {/* Reset Password Button */}
+                    <button
+                        onClick={onResetPassword}
+                        className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                        title="Reset password"
+                    >
+                        <Key className="w-4 h-4" />
                     </button>
                     
                     {/* Role Buttons */}
