@@ -9,8 +9,6 @@ import LoadingSkeleton from '../ui/LoadingSkeleton';
 import { utcToEst, formatInEst } from '../../utils/timezone';
 
 const AvailabilityManager: React.FC = React.memo(() => {
-    const startTime = performance.now();
-    console.log('📅 AvailabilityManager component rendered at', startTime);
     const { user, loading: authLoading } = useAuthContext();
     const {
         error,
@@ -60,22 +58,12 @@ const AvailabilityManager: React.FC = React.memo(() => {
     };
 
     const getSlotsForDate = (date: Date) => {
-        console.log('🔍 getSlotsForDate called for:', date.toDateString(), 'Total slots:', slots.length);
-
         const daySlots = slots.filter(slot => {
             // Convert UTC timestamp to EST for comparison
             const slotDate = utcToEst(slot.start_time);
-            const isSame = isSameDay(slotDate, date);
-            console.log('🗓️ Checking slot:', {
-                slotStartTime: slot.start_time,
-                slotDateEST: slotDate.toDateString(),
-                targetDate: date.toDateString(),
-                isSameDay: isSame
-            });
-            return isSame;
+            return isSameDay(slotDate, date);
         });
 
-        console.log('📅 getSlotsForDate result:', daySlots.length, 'slots for', date.toDateString());
         return daySlots;
     };
 
@@ -117,7 +105,6 @@ const AvailabilityManager: React.FC = React.memo(() => {
             setLocalLoading(true);
 
             try {
-                console.log('📅 Loading availability slots for month:', format(selectedDate, 'yyyy-MM-dd'));
                 const monthStart = startOfMonth(selectedDate);
                 const monthEnd = endOfMonth(selectedDate);
                 const calendarStart = startOfWeek(monthStart);
@@ -134,8 +121,6 @@ const AvailabilityManager: React.FC = React.memo(() => {
                     monthEnd: monthEnd.toISOString()
                 });
 
-                // Remove timeout to see what's actually happening
-                console.log('🚀 Calling getAvailabilitySlots without timeout...');
                 const data = await getAvailabilitySlots(user.id, startDate, endDate);
 
                 console.log('📊 getAvailabilitySlots returned:', data?.length || 0, 'slots');
@@ -273,7 +258,6 @@ const AvailabilityManager: React.FC = React.memo(() => {
                 appointment_type: recurringData.appointmentType as 'consultation' | 'therapy' | 'evaluation' | 'follow_up'
             };
 
-            console.log('🚀 Calling createRecurringAvailability with:', apiData);
             const result = await createRecurringAvailability(apiData);
 
             console.log('✅ Recurring availability created successfully');
